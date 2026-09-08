@@ -2,20 +2,27 @@
 <html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NusantaraTrip - Jasa Open Trip & Wisata Indonesia</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
                     colors: {
                         travel: {
                             50: '#f0fdf4',
                             100: '#dcfce7',
+                            400: '#34d399',
                             500: '#10b981',
                             600: '#059669',
                             700: '#047857',
@@ -27,103 +34,142 @@
             }
         }
     </script>
+    <style>
+        /* Custom Scrollbar Hide for Clean Mobile Scroll */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Glassmorphism Effect */
+        .glass-header {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-travel-500 selection:text-white min-h-screen flex flex-col justify-between pb-16 md:pb-0">
 
-    <!-- NAVBAR -->
-    <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
+    <!-- TOP NAVBAR -->
+    <nav class="sticky top-0 z-40 glass-header border-b border-slate-800/80 transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
-                <!-- Logo -->
-                <div class="flex items-center gap-3">
-                    <div class="bg-gradient-to-tr from-travel-600 to-emerald-400 text-white p-2.5 rounded-2xl shadow-md shadow-travel-500/20">
-                        <i class="fa-solid fa-compass text-xl"></i>
+                
+                <!-- Brand Logo -->
+                <a href="#" class="flex items-center gap-2.5 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-travel-600 to-teal-400 flex items-center justify-center text-white shadow-lg shadow-travel-500/25 group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-compass text-lg"></i>
                     </div>
                     <div>
-                        <span class="font-black text-xl tracking-tight text-slate-900 block leading-none">Nusantara<span class="text-travel-600">Trip</span></span>
-                        <span class="text-[10px] text-slate-400 font-medium tracking-wide">DIGITAL TRAVEL PLATFORM</span>
+                        <span class="font-extrabold text-lg tracking-tight text-white block leading-none">Nusantara<span class="text-travel-400">Trip</span></span>
+                        <span class="text-[9px] font-bold text-slate-400 tracking-wider uppercase block mt-0.5">Digital Travel Platform</span>
                     </div>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden md:flex items-center gap-8 font-semibold text-xs text-slate-300">
+                    <a href="#destinasi" class="hover:text-travel-400 transition">Paket Trip</a>
+                    <a href="#keunggulan" class="hover:text-travel-400 transition">Fasilitas</a>
+                    <a href="#alur" class="hover:text-travel-400 transition">Cara Booking</a>
                 </div>
 
-                <!-- Nav Links -->
-                <div class="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-600">
-                    <a href="#destinasi" class="hover:text-travel-600 transition">Paket Trip</a>
-                    <a href="#fasilitas" class="hover:text-travel-600 transition">Fasilitas</a>
-                    <a href="#alur" class="hover:text-travel-600 transition">Cara Booking</a>
-                </div>
-
-                <!-- Action & Mode Switch -->
-                <div class="flex items-center gap-3">
-                    <button onclick="toggleAdminMode()" id="adminToggleBtn" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3.5 py-2 rounded-xl border border-slate-300 transition flex items-center gap-2">
-                        <i class="fa-solid fa-user-shield text-travel-600"></i>
-                        <span id="adminBtnText">Mode Admin</span>
+                <!-- Action Controls -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <!-- Toggle Admin Mode Button -->
+                    <button onclick="toggleAdminMode()" id="adminToggleBtn" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-200 font-bold px-3 py-2 rounded-xl border border-slate-700 transition flex items-center gap-1.5 active:scale-95">
+                        <i class="fa-solid fa-user-shield text-travel-400 text-sm"></i>
+                        <span id="adminBtnText" class="hidden sm:inline">Mode Admin</span>
                     </button>
-                    <a href="#destinasi" class="bg-travel-600 hover:bg-travel-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md shadow-travel-600/20 transition">
+
+                    <!-- Mobile Menu Button -->
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-slate-200 p-2 text-lg focus:outline-none">
+                        <i class="fa-solid fa-bars-staggered" id="menuIcon"></i>
+                    </button>
+
+                    <!-- Desktop CTA -->
+                    <a href="#destinasi" class="hidden sm:inline-flex bg-travel-600 hover:bg-travel-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-lg shadow-travel-600/25 transition active:scale-95">
                         Pilih Trip
                     </a>
                 </div>
             </div>
         </div>
+
+        <!-- Mobile Side Drawer / Dropdown Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-4 py-4 space-y-3 font-semibold text-sm text-slate-300">
+            <a href="#destinasi" onclick="toggleMobileMenu()" class="block py-2 border-b border-slate-800"><i class="fa-solid fa-plane-departure text-travel-400 mr-2"></i>Paket Open Trip</a>
+            <a href="#keunggulan" onclick="toggleMobileMenu()" class="block py-2 border-b border-slate-800"><i class="fa-solid fa-shield-halved text-travel-400 mr-2"></i>Fasilitas</a>
+            <a href="#alur" onclick="toggleMobileMenu()" class="block py-2"><i class="fa-solid fa-route text-travel-400 mr-2"></i>Cara Booking</a>
+        </div>
     </nav>
 
-    <!-- BANNER ADMIN MODE -->
-    <div id="adminBanner" class="hidden bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 text-xs font-bold py-2.5 px-4 text-center sticky top-16 z-30 shadow-md">
+    <!-- BANNER ADMIN MODE NOTIFICATION -->
+    <div id="adminBanner" class="hidden bg-amber-500 text-slate-950 text-xs font-bold py-2 px-4 sticky top-16 z-30 shadow-md">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <span class="mx-auto flex items-center gap-2">
-                <i class="fa-solid fa-circle-check animate-pulse"></i> PANEL ADMIN TRAVEL AKTIF: Anda dapat memantau pendaftaran peserta & menambah destinasi open trip!
+            <span class="mx-auto flex items-center gap-2 text-center text-[11px] sm:text-xs">
+                <i class="fa-solid fa-circle-check animate-pulse"></i> PANEL ADMIN TRAVEL AKTIF: Anda dapat memantau pendaftaran peserta & menambah destinasi trip!
             </span>
         </div>
     </div>
 
-    <!-- MAIN CONTENT CONTAINER -->
+    <!-- MAIN BODY CONTAINER -->
     <main class="flex-grow">
 
-        <!-- ADMIN DASHBOARD SECTION (Hidden by Default) -->
-        <section id="adminSection" class="hidden bg-slate-900 text-white py-10 border-b border-slate-800">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <!-- ADMIN DASHBOARD PANEL (HIDDEN BY DEFAULT) -->
+        <section id="adminSection" class="hidden bg-slate-900 border-b border-slate-800 py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
                 
-                <!-- Dashboard Header -->
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <!-- Admin Header Bar -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-800/60 p-5 rounded-2xl border border-slate-700/80">
                     <div>
-                        <span class="text-xs text-amber-400 font-mono uppercase tracking-widest font-bold">Travel Management Control</span>
-                        <h2 class="text-2xl font-black text-white flex items-center gap-2">
-                            <i class="fa-solid fa-chart-line text-travel-500"></i> Dashboard Operasional Trip
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping"></span>
+                            <span class="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-widest">Travel SaaS Control</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-black text-white mt-1 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-travel-400"></i> Control Panel Admin
                         </h2>
                     </div>
-                    <button onclick="openAddTripModal()" class="bg-travel-600 hover:bg-travel-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Tambah Destinasi Baru
+                    <button onclick="openAddTripModal()" class="w-full sm:w-auto bg-travel-600 hover:bg-travel-500 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-lg shadow-travel-600/20 transition flex items-center justify-center gap-2 active:scale-95">
+                        <i class="fa-solid fa-plus-circle text-sm"></i> Tambah Destinasi Baru
                     </button>
                 </div>
 
-                <!-- Metric Cards -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80">
-                        <span class="text-xs text-slate-400 block mb-1">Total Omzet Penjualan</span>
-                        <span id="statRevenue" class="text-2xl font-black text-emerald-400">Rp 0</span>
+                <!-- Admin Metrics Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                    <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700">
+                        <span class="text-[11px] text-slate-400 font-medium block">Total Omzet Penjualan</span>
+                        <span id="statRevenue" class="text-xl sm:text-2xl font-black text-emerald-400 mt-1 block">Rp 0</span>
+                        <span class="text-[10px] text-emerald-400 font-bold mt-1 block"><i class="fa-solid fa-arrow-trend-up"></i> +100% Real-time</span>
                     </div>
-                    <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80">
-                        <span class="text-xs text-slate-400 block mb-1">Total Pendaftaran</span>
-                        <span id="statTotalBookings" class="text-2xl font-black text-travel-400">0</span>
+                    <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700">
+                        <span class="text-[11px] text-slate-400 font-medium block">Total Pendaftaran</span>
+                        <span id="statTotalBookings" class="text-xl sm:text-2xl font-black text-travel-400 mt-1 block">0</span>
+                        <span class="text-[10px] text-slate-400 mt-1 block">Pesanan Terdaftar</span>
                     </div>
-                    <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80">
-                        <span class="text-xs text-slate-400 block mb-1">Total Peserta (Pax)</span>
-                        <span id="statTotalPax" class="text-2xl font-black text-amber-400">0 Pax</span>
+                    <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700">
+                        <span class="text-[11px] text-slate-400 font-medium block">Total Peserta (Pax)</span>
+                        <span id="statTotalPax" class="text-xl sm:text-2xl font-black text-amber-400 mt-1 block">0 Pax</span>
+                        <span class="text-[10px] text-amber-400 mt-1 block">Peserta Berangkat</span>
                     </div>
-                    <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80">
-                        <span class="text-xs text-slate-400 block mb-1">Status Lunas</span>
-                        <span id="statSuccessBookings" class="text-2xl font-black text-emerald-400">0</span>
+                    <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700">
+                        <span class="text-[11px] text-slate-400 font-medium block">Status Lunas</span>
+                        <span id="statSuccessBookings" class="text-xl sm:text-2xl font-black text-emerald-400 mt-1 block">0</span>
+                        <span class="text-[10px] text-emerald-400 mt-1 block">E-Tiket Terbit</span>
                     </div>
                 </div>
 
-                <!-- Admin Orders Table -->
-                <div class="bg-slate-800/90 rounded-2xl border border-slate-700 overflow-hidden shadow-xl">
-                    <div class="p-4 border-b border-slate-700/80 flex justify-between items-center bg-slate-800">
-                        <h3 class="font-bold text-sm text-slate-200"><i class="fa-solid fa-users text-travel-400 mr-2"></i>Daftar Pendaftaran Open Trip</h3>
-                        <span class="text-[11px] bg-slate-700 text-slate-300 px-3 py-1 rounded-full font-mono">Real-time Memory Data</span>
+                <!-- Admin Orders View (DESKTOP TABLE & MOBILE CARDS) -->
+                <div class="bg-slate-800/90 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+                    <div class="p-4 border-b border-slate-700 bg-slate-800 flex justify-between items-center">
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-200 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-travel-400"></i> Daftar Pendaftaran Open Trip
+                        </h3>
+                        <span class="text-[10px] bg-slate-700 text-slate-300 px-2.5 py-1 rounded-full font-mono">Memory Synced</span>
                     </div>
-                    <div class="overflow-x-auto">
+
+                    <!-- Desktop View Table (Visible on sm Screen and Above) -->
+                    <div class="hidden sm:block overflow-x-auto">
                         <table class="w-full text-left text-xs text-slate-300">
-                            <thead class="bg-slate-900/80 text-slate-400 uppercase font-bold text-[10px] tracking-wider">
+                            <thead class="bg-slate-900/90 text-slate-400 uppercase font-bold text-[10px] tracking-wider border-b border-slate-700">
                                 <tr>
                                     <th class="p-3.5">Kode Booking</th>
                                     <th class="p-3.5">Pemesan / WA</th>
@@ -136,124 +182,142 @@
                                 </tr>
                             </thead>
                             <tbody id="adminTableBody" class="divide-y divide-slate-700/60 font-medium">
-                                <!-- Rendered dynamically by JavaScript -->
+                                <!-- Dynamic via JS -->
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Mobile View Cards (Visible ONLY on Mobile Screens) -->
+                    <div id="adminMobileCardList" class="sm:hidden divide-y divide-slate-700/80 p-2 space-y-2">
+                        <!-- Dynamic via JS -->
+                    </div>
                 </div>
+
             </div>
         </section>
 
         <!-- HERO SECTION -->
-        <section class="relative bg-gradient-to-b from-slate-900 via-slate-800 to-travel-900 text-white py-20 overflow-hidden border-b border-slate-800">
+        <section class="relative bg-slate-950 text-white py-12 md:py-20 overflow-hidden border-b border-slate-800">
+            <!-- Ambient Light Background Blur -->
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[300px] md:w-[600px] h-[300px] bg-travel-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="grid md:grid-cols-2 gap-12 items-center">
-                    <div class="space-y-6">
-                        <div class="inline-flex items-center gap-2 bg-travel-500/20 text-travel-300 text-xs font-bold px-3 py-1.5 rounded-full border border-travel-500/30">
+                <div class="grid md:grid-cols-2 gap-10 items-center">
+                    
+                    <div class="space-y-5 text-center md:text-left">
+                        <div class="inline-flex items-center gap-2 bg-travel-500/10 text-travel-400 text-xs font-bold px-3 py-1.5 rounded-full border border-travel-500/20">
                             <i class="fa-solid fa-plane-departure text-amber-400"></i> Open Trip Hemat & Terpercaya 2026
                         </div>
-                        <h1 class="text-4xl md:text-5xl font-black leading-tight tracking-tight">
+                        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight tracking-tight text-white">
                             Jelajahi Keindahan Nusantara Tanpa Pusing Solo Traveling
                         </h1>
-                        <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                        <p class="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-xl mx-auto md:mx-0">
                             Gabung rombongan open trip, hemat biaya perjalanan, dapat teman baru, dan nikmati dokumentasi estetik gratis selama liburan.
                         </p>
-                        <div class="flex flex-wrap gap-4 pt-2">
-                            <a href="#destinasi" class="bg-travel-600 hover:bg-travel-500 text-white font-bold text-sm px-6 py-3.5 rounded-xl shadow-lg shadow-travel-600/30 transition flex items-center gap-2">
+                        
+                        <div class="flex flex-col sm:flex-row gap-3 pt-2 justify-center md:justify-start">
+                            <a href="#destinasi" class="bg-travel-600 hover:bg-travel-500 text-white font-bold text-xs px-6 py-3.5 rounded-xl shadow-lg shadow-travel-600/25 transition flex items-center justify-center gap-2 active:scale-95">
                                 <i class="fa-solid fa-calendar-days"></i> Lihat Jadwal Open Trip
                             </a>
-                            <a href="#alur" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm px-6 py-3.5 rounded-xl border border-slate-700 transition">
-                                Cara Pendaftaran
+                            <a href="#alur" class="bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs px-6 py-3.5 rounded-xl border border-slate-800 transition flex items-center justify-center">
+                                Cara Pemesanan
                             </a>
                         </div>
                     </div>
 
-                    <!-- Graphic Box -->
+                    <!-- Travel Feature Card Preview Graphic -->
                     <div class="relative">
-                        <div class="w-full bg-slate-800/90 rounded-2xl border border-slate-700/80 p-6 shadow-2xl backdrop-blur-md space-y-4">
-                            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-                                <span class="text-xs text-amber-400 font-bold"><i class="fa-solid fa-fire mr-1"></i> Featured Destinasi</span>
-                                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/30">Sisa 3 Seat</span>
+                        <div class="w-full bg-slate-900/90 rounded-3xl border border-slate-800 p-5 shadow-2xl backdrop-blur-xl space-y-4">
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                                <span class="text-xs text-amber-400 font-bold"><i class="fa-solid fa-fire mr-1"></i> Trending Destinasi 2026</span>
+                                <span class="text-[10px] bg-emerald-500/10 text-emerald-400 font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/20">Sisa 3 Seat</span>
                             </div>
+
                             <div class="space-y-2">
                                 <h3 class="text-xl font-black text-white">Open Trip Bromo Sunrise Excursion</h3>
                                 <p class="text-xs text-slate-300"><i class="fa-solid fa-location-dot text-travel-400 mr-1.5"></i> TNBTS, Jawa Timur</p>
                                 <p class="text-xs text-slate-400"><i class="fa-solid fa-van-shuttle text-travel-400 mr-1.5"></i> Meeting Point: Malang / Surabaya</p>
                             </div>
-                            <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700 flex justify-between items-center">
+
+                            <div class="p-3 bg-slate-950 rounded-2xl border border-slate-800 flex justify-between items-center">
                                 <div>
-                                    <span class="text-[10px] text-slate-400 block">Mulai Dari</span>
-                                    <span class="text-lg font-black text-travel-400">Rp 350.000 <span class="text-xs font-normal text-slate-400">/pax</span></span>
+                                    <span class="text-[9px] text-slate-500 block">Mulai Dari</span>
+                                    <span class="text-base font-black text-travel-400">Rp 350.000 <span class="text-xs font-normal text-slate-400">/pax</span></span>
                                 </div>
-                                <a href="#destinasi" class="bg-white text-slate-900 font-bold text-xs px-3.5 py-2 rounded-xl hover:bg-slate-200 transition">
+                                <a href="#destinasi" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition">
                                     Detail Trip
                                 </a>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </section>
 
-        <!-- KATALOG DESTINASI (USER SECTION) -->
-        <section id="destinasi" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- DESTINATIONS CATALOG SECTION -->
+        <section id="destinasi" class="py-12 md:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="text-center max-w-2xl mx-auto mb-10 space-y-2">
-                <span class="text-xs font-bold text-travel-600 bg-travel-50 px-3 py-1 rounded-full uppercase tracking-wider">Katalog Open Trip</span>
-                <h2 class="text-3xl font-black text-slate-900">Pilih Paket Wisata Impianmu</h2>
-                <p class="text-slate-600 text-sm">Harga terjangkau, jadwal pasti berangkat, dan perlengkapan liburan lengkap.</p>
+            <div class="text-center max-w-2xl mx-auto mb-8 space-y-2">
+                <span class="text-[10px] font-extrabold text-travel-400 bg-travel-500/10 border border-travel-500/20 px-3 py-1 rounded-full uppercase tracking-wider">Katalog Open Trip</span>
+                <h2 class="text-2xl sm:text-3xl font-black text-white">Pilih Paket Wisata Impianmu</h2>
+                <p class="text-slate-400 text-xs sm:text-sm">Harga terjangkau, jadwal pasti berangkat, dan perlengkapan liburan lengkap.</p>
             </div>
 
-            <!-- Filter & Search Controls -->
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-                <!-- Category Tabs -->
-                <div class="flex flex-wrap gap-2" id="filterCategoryContainer">
-                    <button onclick="filterTrips('all')" class="cat-btn active bg-travel-600 text-white text-xs font-bold px-4 py-2 rounded-xl transition">Semua</button>
-                    <button onclick="filterTrips('Gunung')" class="cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-xl transition">Gunung & Pegunungan</button>
-                    <button onclick="filterTrips('Pantai')" class="cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-xl transition">Pantai & Laut</button>
+            <!-- Filter Categories & Search Bar (Mobile Optimized Horizontal Scroll) -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
+                
+                <!-- Category Horizontal Scroll Box -->
+                <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto no-scrollbar pb-1 md:pb-0" id="filterCategoryContainer">
+                    <button onclick="filterTrips('all')" class="cat-btn active whitespace-nowrap bg-travel-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">Semua</button>
+                    <button onclick="filterTrips('Gunung')" class="cat-btn whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl transition">Gunung & Pegunungan</button>
+                    <button onclick="filterTrips('Pantai')" class="cat-btn whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl transition">Pantai & Laut</button>
                 </div>
 
-                <!-- Search Bar -->
-                <div class="relative w-full sm:w-64">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-                    <input type="text" id="searchInput" onkeyup="searchTrips()" placeholder="Cari destinasi..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-travel-500 outline-none">
+                <!-- Search Input Bar -->
+                <div class="relative w-full md:w-64">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                    <input type="text" id="searchInput" onkeyup="searchTrips()" placeholder="Cari destinasi..." class="w-full pl-9 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-travel-500 outline-none">
                 </div>
             </div>
 
-            <!-- Trip Cards Grid -->
-            <div id="tripGrid" class="grid md:grid-cols-3 gap-6">
-                <!-- Rendered dynamically by JavaScript -->
+            <!-- Trips Grid -->
+            <div id="tripGrid" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- Dynamic via JS -->
             </div>
         </section>
 
-        <!-- ALUR KERJA SECTION -->
-        <section id="alur" class="py-16 bg-white border-t border-slate-200">
+        <!-- WORKFLOW SECTION -->
+        <section id="alur" class="py-12 md:py-16 bg-slate-900 border-t border-slate-800">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center max-w-xl mx-auto mb-12">
-                    <h2 class="text-2xl font-black text-slate-900">4 Langkah Mudah Booking Open Trip</h2>
-                    <p class="text-slate-600 text-xs mt-1">Proses cepat dan konfirmasi e-tiket instan.</p>
+                <div class="text-center max-w-xl mx-auto mb-10">
+                    <h2 class="text-2xl font-black text-white">4 Langkah Mudah Booking Open Trip</h2>
+                    <p class="text-slate-400 text-xs mt-1">Proses cepat dan konfirmasi e-tiket instan.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <div class="text-center space-y-3">
-                        <div class="w-12 h-12 bg-travel-50 text-travel-600 rounded-2xl font-black text-lg flex items-center justify-center mx-auto border border-travel-100 shadow-sm">1</div>
-                        <h4 class="font-bold text-slate-900 text-sm">Pilih Destinasi</h4>
-                        <p class="text-xs text-slate-500">Tentukan paket trip dan tanggal keberangkatan impianmu.</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                    <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 text-center space-y-2">
+                        <div class="w-10 h-10 bg-travel-500/10 text-travel-400 rounded-xl font-black text-sm flex items-center justify-center mx-auto border border-travel-500/20">1</div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Pilih Destinasi</h4>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">Pilih paket trip impianmu di katalog.</p>
                     </div>
-                    <div class="text-center space-y-3">
-                        <div class="w-12 h-12 bg-travel-50 text-travel-600 rounded-2xl font-black text-lg flex items-center justify-center mx-auto border border-travel-100 shadow-sm">2</div>
-                        <h4 class="font-bold text-slate-900 text-sm">Isi Data Peserta</h4>
-                        <p class="text-xs text-slate-500">Tentukan jumlah peserta (pax) dan data kontak WhatsApp.</p>
+
+                    <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 text-center space-y-2">
+                        <div class="w-10 h-10 bg-travel-500/10 text-travel-400 rounded-xl font-black text-sm flex items-center justify-center mx-auto border border-travel-500/20">2</div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Isi Data Peserta</h4>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">Tentukan jumlah peserta (pax) & No. WA.</p>
                     </div>
-                    <div class="text-center space-y-3">
-                        <div class="w-12 h-12 bg-travel-50 text-travel-600 rounded-2xl font-black text-lg flex items-center justify-center mx-auto border border-travel-100 shadow-sm">3</div>
-                        <h4 class="font-bold text-slate-900 text-sm">Bayar Instant</h4>
-                        <p class="text-xs text-slate-500">Simulasi bayar lewat QRIS atau Transfer Virtual Account.</p>
+
+                    <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 text-center space-y-2">
+                        <div class="w-10 h-10 bg-travel-500/10 text-travel-400 rounded-xl font-black text-sm flex items-center justify-center mx-auto border border-travel-500/20">3</div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Simulasi Bayar</h4>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">Bayar instant via QRIS atau Virtual Account.</p>
                     </div>
-                    <div class="text-center space-y-3">
-                        <div class="w-12 h-12 bg-travel-50 text-travel-600 rounded-2xl font-black text-lg flex items-center justify-center mx-auto border border-travel-100 shadow-sm">4</div>
-                        <h4 class="font-bold text-slate-900 text-sm">Terima E-Tiket</h4>
-                        <p class="text-xs text-slate-500">E-tiket otomatis terbit dan siap dibawa ke Meeting Point!</p>
+
+                    <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 text-center space-y-2">
+                        <div class="w-10 h-10 bg-travel-500/10 text-travel-400 rounded-xl font-black text-sm flex items-center justify-center mx-auto border border-travel-500/20">4</div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Terima E-Tiket</h4>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">E-tiket terbit otomatis & siap berangkat!</p>
                     </div>
                 </div>
             </div>
@@ -261,57 +325,74 @@
 
     </main>
 
+    <!-- MOBILE BOTTOM NAVIGATION FLOATING BAR -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 px-6 py-2.5 flex justify-around items-center text-slate-400">
+        <a href="#destinasi" class="flex flex-col items-center gap-1 hover:text-travel-400">
+            <i class="fa-solid fa-border-all text-base"></i>
+            <span class="text-[9px] font-bold">Katalog</span>
+        </a>
+        <button onclick="toggleAdminMode()" class="flex flex-col items-center gap-1 hover:text-travel-400">
+            <i class="fa-solid fa-user-shield text-base text-travel-400"></i>
+            <span class="text-[9px] font-bold text-travel-400">Admin</span>
+        </button>
+        <a href="#alur" class="flex flex-col items-center gap-1 hover:text-travel-400">
+            <i class="fa-solid fa-circle-info text-base"></i>
+            <span class="text-[9px] font-bold">Info</span>
+        </a>
+    </div>
+
     <!-- FOOTER -->
-    <footer class="bg-slate-900 text-slate-400 py-8 text-xs text-center border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 space-y-2">
+    <footer class="bg-slate-950 text-slate-500 py-6 text-xs text-center border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
             <p>© 2026 NusantaraTrip — Tugas Mata Kuliah Digital Entrepreneurship.</p>
-            <p class="text-[11px] text-slate-500">Didesain untuk simulasi e-commerce open trip full-stack lokal (User & Admin Role).</p>
+            <p class="text-[10px] text-slate-600">Simulasi Digital Open Trip Enterprise (User & Admin Role Active Memory).</p>
         </div>
     </footer>
 
-    <!-- MODAL 1: BOOKING & PAYMENT GATEWAY -->
-    <div id="bookingModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 relative">
+    <!-- MODAL 1: BOOKING & PAYMENT GATEWAY (MOBILE BOTTOM SHEET STYLE / DESKTOP CENTERED) -->
+    <div id="bookingModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all">
+        <div class="bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-slate-800 relative max-h-[90vh] overflow-y-auto no-scrollbar">
             
-            <button onclick="closeBookingModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">
-                <i class="fa-solid fa-xmark text-xl"></i>
+            <!-- Close Button -->
+            <button onclick="closeBookingModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2">
+                <i class="fa-solid fa-xmark text-lg"></i>
             </button>
 
-            <!-- STEP 1: FORM PESERTA -->
+            <!-- STEP 1: FORM REGISTRASI -->
             <div id="modalStep1" class="space-y-4">
                 <div>
-                    <span class="text-[10px] font-bold text-travel-600 bg-travel-50 px-2.5 py-1 rounded-md uppercase">Langkah 1 dari 2</span>
-                    <h3 class="text-xl font-black text-slate-900 mt-1">Registrasi Open Trip</h3>
+                    <span class="text-[10px] font-bold text-travel-400 bg-travel-500/10 px-2.5 py-1 rounded-md uppercase border border-travel-500/20">Langkah 1 dari 2</span>
+                    <h3 class="text-lg font-black text-white mt-1">Registrasi Open Trip</h3>
                 </div>
 
                 <form onsubmit="proceedToPayment(event)" class="space-y-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Paket Trip Dipilih</label>
-                        <input type="text" id="formTripTitle" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Paket Trip Dipilih</label>
+                        <input type="text" id="formTripTitle" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-bold text-travel-400">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Pemesan / Ketua</label>
-                            <input type="text" id="formCustName" required placeholder="Contoh: Hasta" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-travel-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Nama Pemesan / Ketua</label>
+                            <input type="text" id="formCustName" required placeholder="Contoh: Hasta" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:ring-2 focus:ring-travel-500 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">No. WhatsApp</label>
-                            <input type="tel" id="formCustPhone" required placeholder="08123456789" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-travel-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-300 mb-1">No. WhatsApp</label>
+                            <input type="tel" id="formCustPhone" required placeholder="08123456789" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:ring-2 focus:ring-travel-500 outline-none">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Jumlah Peserta (Pax)</label>
-                        <input type="number" id="formPaxCount" min="1" max="10" value="1" onchange="calculateTotal()" onkeyup="calculateTotal()" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-travel-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Jumlah Peserta (Pax)</label>
+                        <input type="number" id="formPaxCount" min="1" max="10" value="1" onchange="calculateTotal()" onkeyup="calculateTotal()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:ring-2 focus:ring-travel-500 outline-none">
                     </div>
 
-                    <div class="pt-2 border-t border-slate-100 flex justify-between items-center">
+                    <div class="pt-2 border-t border-slate-800 flex justify-between items-center">
                         <div>
-                            <span class="text-[10px] text-slate-400 block">Total Biaya Tagihan</span>
-                            <span id="formTotalPrice" class="text-xl font-black text-travel-600">Rp 0</span>
+                            <span class="text-[10px] text-slate-400 block">Total Tagihan</span>
+                            <span id="formTotalPrice" class="text-lg font-black text-travel-400">Rp 0</span>
                         </div>
-                        <button type="submit" class="bg-travel-600 hover:bg-travel-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition flex items-center gap-2">
+                        <button type="submit" class="bg-travel-600 hover:bg-travel-500 text-white font-bold text-xs px-5 py-3 rounded-xl transition flex items-center gap-2 active:scale-95">
                             Lanjut Pembayaran <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     </div>
@@ -321,80 +402,78 @@
             <!-- STEP 2: SIMULASI PAYMENT GATEWAY -->
             <div id="modalStep2" class="hidden space-y-4">
                 <div>
-                    <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md uppercase">Langkah 2 dari 2</span>
-                    <h3 class="text-xl font-black text-slate-900 mt-1">Payment Gateway Simulation</h3>
+                    <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md uppercase border border-emerald-500/20">Langkah 2 dari 2</span>
+                    <h3 class="text-lg font-black text-white mt-1">Simulasi Payment Gateway</h3>
                 </div>
 
-                <!-- Choose Payment Method -->
                 <div class="space-y-2">
-                    <label class="block text-xs font-bold text-slate-700">Pilih Metode Pembayaran Digital</label>
+                    <label class="block text-xs font-bold text-slate-300">Pilih Metode Pembayaran</label>
                     <div class="grid grid-cols-2 gap-3">
-                        <button type="button" onclick="selectPayMethod('qris')" id="payBtnQris" class="pay-method-btn active border-2 border-travel-600 bg-travel-50/50 p-3 rounded-xl text-left flex items-center gap-2">
-                            <i class="fa-solid fa-qrcode text-travel-600 text-lg"></i>
+                        <button type="button" onclick="selectPayMethod('qris')" id="payBtnQris" class="pay-method-btn active border-2 border-travel-500 bg-travel-500/10 p-3 rounded-xl text-left flex items-center gap-2">
+                            <i class="fa-solid fa-qrcode text-travel-400 text-base"></i>
                             <div>
-                                <span class="font-bold text-xs block text-slate-800">QRIS Instant</span>
-                                <span class="text-[10px] text-slate-500">GoPay, OVO, Dana, Shopee</span>
+                                <span class="font-bold text-xs block text-white">QRIS</span>
+                                <span class="text-[9px] text-slate-400">All E-Wallet</span>
                             </div>
                         </button>
-                        <button type="button" onclick="selectPayMethod('mandiri')" id="payBtnMandiri" class="pay-method-btn border-2 border-slate-200 p-3 rounded-xl text-left flex items-center gap-2">
-                            <i class="fa-solid fa-building-columns text-slate-600 text-lg"></i>
+                        <button type="button" onclick="selectPayMethod('mandiri')" id="payBtnMandiri" class="pay-method-btn border-2 border-slate-800 p-3 rounded-xl text-left flex items-center gap-2">
+                            <i class="fa-solid fa-building-columns text-slate-400 text-base"></i>
                             <div>
-                                <span class="font-bold text-xs block text-slate-800">Bank Mandiri</span>
-                                <span class="text-[10px] text-slate-500">Virtual Account</span>
+                                <span class="font-bold text-xs block text-white">Bank Mandiri</span>
+                                <span class="text-[9px] text-slate-400">Virtual Account</span>
                             </div>
                         </button>
                     </div>
                 </div>
 
-                <!-- Display Container (Dynamic QR / VA) -->
-                <div id="paymentDisplayBox" class="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-300 text-center space-y-2">
+                <div id="paymentDisplayBox" class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-center space-y-2">
                     <!-- Dynamic via JS -->
                 </div>
 
                 <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="backToStep1()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs">
+                    <button type="button" onclick="backToStep1()" class="w-1/3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3 rounded-xl text-xs">
                         Kembali
                     </button>
-                    <button type="button" onclick="executeSimulatedPayment()" class="w-2/3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-lock"></i> Konfirmasi Bayar Sekarang
+                    <button type="button" onclick="executeSimulatedPayment()" class="w-2/3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs shadow-lg shadow-emerald-600/20 transition active:scale-95 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-lock"></i> Konfirmasi Bayar
                     </button>
                 </div>
             </div>
 
             <!-- STEP 3: E-TIKET SUCCESS -->
             <div id="modalStep3" class="hidden text-center space-y-4 py-2">
-                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
+                <div class="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center text-2xl mx-auto border border-emerald-500/30">
                     <i class="fa-solid fa-circle-check"></i>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-black text-slate-900">E-Tiket Terbit!</h3>
-                    <p class="text-xs text-slate-500 mt-1">Data pendaftaran otomatis tersimpan di Dashboard Admin.</p>
+                    <h3 class="text-xl font-black text-white">E-Tiket Terbit!</h3>
+                    <p class="text-xs text-slate-400 mt-1">Data pendaftaran otomatis tersimpan di Dashboard Admin.</p>
                 </div>
 
-                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-left text-xs space-y-2 font-mono">
-                    <div class="flex justify-between border-b border-slate-200 pb-2">
-                        <span class="text-slate-400">Kode Booking:</span>
-                        <span id="receiptTrxId" class="font-bold text-slate-800">#TRIP-000</span>
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-left text-xs space-y-2 font-mono">
+                    <div class="flex justify-between border-b border-slate-800 pb-2">
+                        <span class="text-slate-500">Kode Booking:</span>
+                        <span id="receiptTrxId" class="font-bold text-travel-400">#TRIP-000</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-slate-400">Pemesan:</span>
-                        <span id="receiptCust" class="text-slate-800">-</span>
+                        <span class="text-slate-500">Pemesan:</span>
+                        <span id="receiptCust" class="text-slate-200">-</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-slate-400">Paket Trip:</span>
-                        <span id="receiptTrip" class="text-slate-800">-</span>
+                        <span class="text-slate-500">Paket Trip:</span>
+                        <span id="receiptTrip" class="text-slate-200">-</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-slate-400">Jumlah Peserta:</span>
-                        <span id="receiptPax" class="text-slate-800">-</span>
+                        <span class="text-slate-500">Jumlah Peserta:</span>
+                        <span id="receiptPax" class="text-slate-200">-</span>
                     </div>
-                    <div class="flex justify-between border-t border-slate-200 pt-2 font-sans font-bold">
-                        <span class="text-slate-600">Total Lunas:</span>
-                        <span id="receiptTotal" class="text-travel-600 text-sm">Rp 0</span>
+                    <div class="flex justify-between border-t border-slate-800 pt-2 font-sans font-bold">
+                        <span class="text-slate-400">Total Lunas:</span>
+                        <span id="receiptTotal" class="text-emerald-400 text-sm">Rp 0</span>
                     </div>
                 </div>
 
-                <button onclick="closeBookingModal()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs">
+                <button onclick="closeBookingModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl text-xs">
                     Selesai & Tutup
                 </button>
             </div>
@@ -403,58 +482,60 @@
     </div>
 
     <!-- MODAL 2: ADMIN TAMBAH DESTINASI BARU -->
-    <div id="addTripModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 relative">
-            <button onclick="closeAddTripModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">
-                <i class="fa-solid fa-xmark text-xl"></i>
+    <div id="addTripModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-800 relative">
+            <button onclick="closeAddTripModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2">
+                <i class="fa-solid fa-xmark text-lg"></i>
             </button>
 
-            <h3 class="text-xl font-black text-slate-900 mb-1"><i class="fa-solid fa-plus-circle text-emerald-600 mr-2"></i>Tambah Destinasi Trip</h3>
-            <p class="text-xs text-slate-500 mb-4">Paket baru akan langsung terbit di katalog User.</p>
+            <h3 class="text-lg font-black text-white mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-emerald-400"></i> Tambah Destinasi Trip
+            </h3>
+            <p class="text-xs text-slate-400 mb-4">Paket trip baru akan langsung dipublikasikan ke katalog User.</p>
 
             <form onsubmit="saveNewTrip(event)" class="space-y-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Nama Destinasi / Trip</label>
-                    <input type="text" id="newTripTitle" required placeholder="Contoh: Explore Dieng Plateau" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Nama Destinasi / Trip</label>
+                    <input type="text" id="newTripTitle" required placeholder="Contoh: Explore Dieng Plateau" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Kategori</label>
-                        <select id="newTripCategory" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Kategori</label>
+                        <select id="newTripCategory" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none">
                             <option value="Gunung">Gunung & Pegunungan</option>
                             <option value="Pantai">Pantai & Laut</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Harga / Pax (Rp)</label>
-                        <input type="number" id="newTripPrice" required placeholder="450000" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Harga / Pax (Rp)</label>
+                        <input type="number" id="newTripPrice" required placeholder="450000" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Durasi Trip</label>
-                        <input type="text" id="newTripDuration" required placeholder="2 Hari 1 Malam" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Durasi Trip</label>
+                        <input type="text" id="newTripDuration" required placeholder="2 Hari 1 Malam" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Meeting Point (MP)</label>
-                        <input type="text" id="newTripMp" required placeholder="Jakarta / Wonosobo" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Meeting Point (MP)</label>
+                        <input type="text" id="newTripMp" required placeholder="Jakarta / Wonosobo" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Fasilitas (Pisahkan dengan koma)</label>
-                    <input type="text" id="newTripFeatures" placeholder="Transport AC, Homestay, Tiket Wisata, Dokumentasi" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Fasilitas Utama (Pisahkan Koma)</label>
+                    <input type="text" id="newTripFeatures" placeholder="Transport AC, Homestay, Tiket Wisata, Dokumentasi" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none">
                 </div>
 
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs mt-2 shadow-lg transition">
-                    Simpan & Publikasikan Trip
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs mt-2 shadow-lg transition active:scale-95">
+                    Publikasikan Trip
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC FULL INTERACTIVE -->
+    <!-- JAVASCRIPT LOGIC FULL INTERACTIVE ACTIVE MEMORY -->
     <script>
-        // --- 1. DATA STORE (State) ---
+        // --- 1. DATA STORE ---
         let tripsData = [
             {
                 id: 1,
@@ -520,14 +601,20 @@
         let currentSelectedTrip = null;
         let selectedPayMethodType = 'qris';
 
-        // --- 2. INITIALIZATION ---
+        // --- 2. INIT & EVENT LISTENERS ---
         document.addEventListener('DOMContentLoaded', () => {
             renderCatalogue();
-            renderAdminTable();
+            renderAdminView();
             updateAdminStats();
         });
 
-        // --- 3. MODE ADMIN TOGGLE ---
+        // --- 3. MOBILE MENU TOGGLE ---
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- 4. MODE ADMIN TOGGLE ---
         function toggleAdminMode() {
             const adminSection = document.getElementById('adminSection');
             const adminBanner = document.getElementById('adminBanner');
@@ -537,17 +624,17 @@
             if (adminSection.classList.contains('hidden')) {
                 adminSection.classList.remove('hidden');
                 adminBanner.classList.remove('hidden');
-                btnText.innerText = 'Keluar Admin';
-                btn.classList.add('bg-amber-100', 'text-amber-800', 'border-amber-400');
+                if (btnText) btnText.innerText = 'Keluar Admin';
+                btn.classList.add('bg-amber-500', 'text-slate-950', 'border-amber-400');
             } else {
                 adminSection.classList.add('hidden');
                 adminBanner.classList.add('hidden');
-                btnText.innerText = 'Mode Admin';
-                btn.classList.remove('bg-amber-100', 'text-amber-800', 'border-amber-400');
+                if (btnText) btnText.innerText = 'Mode Admin';
+                btn.classList.remove('bg-amber-500', 'text-slate-950', 'border-amber-400');
             }
         }
 
-        // --- 4. RENDER KATALOG & FILTER ---
+        // --- 5. RENDER CATALOGUE ---
         function renderCatalogue() {
             const grid = document.getElementById('tripGrid');
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
@@ -560,42 +647,42 @@
             });
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-3 text-center py-12 text-slate-400 text-xs font-semibold">Tidak ada paket trip yang ditemukan.</div>`;
+                grid.innerHTML = `<div class="col-span-3 text-center py-10 text-slate-500 text-xs font-semibold">Tidak ada paket trip ditemukan.</div>`;
                 return;
             }
 
             filtered.forEach(item => {
-                const badgePopular = item.popular ? `<span class="absolute top-3 right-3 z-10 bg-travel-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow">BEST SELLER</span>` : '';
-                const featuresList = item.features.map(f => `<li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> ${f}</li>`).join('');
+                const badgePopular = item.popular ? `<span class="absolute top-3 right-3 z-10 bg-travel-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow">BEST SELLER</span>` : '';
+                const featuresList = item.features.map(f => `<li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> ${f}</li>`).join('');
 
                 const cardHtml = `
-                    <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between relative group">
+                    <div class="bg-slate-900 rounded-3xl border border-slate-800 shadow-xl hover:border-travel-500/50 transition-all duration-300 overflow-hidden flex flex-col justify-between relative group">
                         ${badgePopular}
                         <div>
-                            <div class="h-44 bg-gradient-to-tr ${item.bgGradient} p-5 flex flex-col justify-between text-white relative">
-                                <span class="bg-slate-900/60 backdrop-blur-md text-[10px] font-bold px-3 py-1 rounded-full w-max">
+                            <div class="h-40 bg-gradient-to-tr ${item.bgGradient} p-5 flex flex-col justify-between text-white relative">
+                                <span class="bg-slate-950/60 backdrop-blur-md text-[9px] font-bold px-3 py-1 rounded-full w-max">
                                     <i class="fa-solid fa-clock mr-1"></i> ${item.duration}
                                 </span>
                                 <div>
-                                    <span class="text-[10px] uppercase font-bold text-white/80 tracking-wider">${item.category}</span>
-                                    <h3 class="text-xl font-black">${item.title}</h3>
+                                    <span class="text-[9px] uppercase font-bold text-white/80 tracking-wider">${item.category}</span>
+                                    <h3 class="text-lg font-black">${item.title}</h3>
                                 </div>
                             </div>
-                            <div class="p-6">
-                                <div class="flex items-center gap-2 text-xs text-slate-500 mb-4 font-medium">
-                                    <i class="fa-solid fa-map-pin text-travel-600"></i> MP: ${item.mp}
+                            <div class="p-5">
+                                <div class="flex items-center gap-2 text-xs text-slate-400 mb-3 font-medium">
+                                    <i class="fa-solid fa-map-pin text-travel-400"></i> MP: ${item.mp}
                                 </div>
-                                <ul class="space-y-1.5 text-xs text-slate-600 font-medium">
+                                <ul class="space-y-1.5 text-xs text-slate-300 font-medium">
                                     ${featuresList}
                                 </ul>
                             </div>
                         </div>
-                        <div class="p-6 pt-0 border-t border-slate-100 flex items-center justify-between mt-4">
-                            <div class="pt-4">
-                                <span class="text-[10px] text-slate-400 block">Harga / Pax</span>
-                                <span class="text-lg font-black text-travel-600">Rp ${item.price.toLocaleString('id-ID')}</span>
+                        <div class="p-5 pt-0 border-t border-slate-800/80 flex items-center justify-between mt-3">
+                            <div class="pt-3">
+                                <span class="text-[9px] text-slate-500 block">Harga / Pax</span>
+                                <span class="text-base font-black text-travel-400">Rp ${item.price.toLocaleString('id-ID')}</span>
                             </div>
-                            <button onclick="openBookingModal(${item.id})" class="mt-4 bg-slate-900 hover:bg-travel-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow">
+                            <button onclick="openBookingModal(${item.id})" class="mt-3 bg-travel-600 hover:bg-travel-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow active:scale-95">
                                 Booking Seat
                             </button>
                         </div>
@@ -609,9 +696,9 @@
             activeCategory = cat;
             document.querySelectorAll('#filterCategoryContainer .cat-btn').forEach(btn => {
                 btn.classList.remove('bg-travel-600', 'text-white');
-                btn.classList.add('bg-slate-100', 'text-slate-700');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
             });
-            event.target.classList.remove('bg-slate-100', 'text-slate-700');
+            event.target.classList.remove('bg-slate-800', 'text-slate-300');
             event.target.classList.add('bg-travel-600', 'text-white');
             renderCatalogue();
         }
@@ -620,7 +707,7 @@
             renderCatalogue();
         }
 
-        // --- 5. BOOKING MODAL & PAYMENT GATEWAY FLOW ---
+        // --- 6. BOOKING & PAYMENT GATEWAY MODAL FLOW ---
         function openBookingModal(tripId) {
             currentSelectedTrip = tripsData.find(t => t.id === tripId);
             if (!currentSelectedTrip) return;
@@ -629,7 +716,6 @@
             document.getElementById('formPaxCount').value = 1;
             calculateTotal();
             
-            // Reset form steps
             document.getElementById('modalStep1').classList.remove('hidden');
             document.getElementById('modalStep2').classList.add('hidden');
             document.getElementById('modalStep3').classList.add('hidden');
@@ -652,7 +738,7 @@
             e.preventDefault();
             document.getElementById('modalStep1').classList.add('hidden');
             document.getElementById('modalStep2').classList.remove('hidden');
-            selectPayMethod('qris'); // Default
+            selectPayMethod('qris');
         }
 
         function backToStep1() {
@@ -667,21 +753,24 @@
             const displayBox = document.getElementById('paymentDisplayBox');
 
             if (type === 'qris') {
-                qrisBtn.className = "pay-method-btn active border-2 border-travel-600 bg-travel-50/50 p-3 rounded-xl text-left flex items-center gap-2";
-                mandiriBtn.className = "pay-method-btn border-2 border-slate-200 p-3 rounded-xl text-left flex items-center gap-2";
+                qrisBtn.className = "pay-method-btn active border-2 border-travel-500 bg-travel-500/10 p-3 rounded-xl text-left flex items-center gap-2";
+                mandiriBtn.className = "pay-method-btn border-2 border-slate-800 p-3 rounded-xl text-left flex items-center gap-2";
                 displayBox.innerHTML = `
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=NusantaraTripQRISPayment" alt="QRIS" class="mx-auto w-32 h-32 rounded-xl shadow border">
-                    <p class="text-[11px] font-bold text-slate-700">Scan QRIS dengan E-Wallet/MBanking</p>
-                    <p class="text-[10px] text-slate-400">NMI: ID99283746102 - NusantaraTrip Official</p>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=NusantaraTripQRISPayment" alt="QRIS" class="mx-auto w-28 h-28 rounded-xl shadow border border-slate-700">
+                    <p class="text-xs font-bold text-white mt-2">Scan QRIS Instant</p>
+                    <p class="text-[10px] text-slate-500">NMI: ID99283746102 - NusantaraTrip Official</p>
                 `;
             } else {
-                mandiriBtn.className = "pay-method-btn active border-2 border-travel-600 bg-travel-50/50 p-3 rounded-xl text-left flex items-center gap-2";
-                qrisBtn.className = "pay-method-btn border-2 border-slate-200 p-3 rounded-xl text-left flex items-center gap-2";
+                mandiriBtn.className = "pay-method-btn active border-2 border-travel-500 bg-travel-500/10 p-3 rounded-xl text-left flex items-center gap-2";
+                qrisBtn.className = "pay-method-btn border-2 border-slate-800 p-3 rounded-xl text-left flex items-center gap-2";
                 displayBox.innerHTML = `
                     <div class="py-2">
-                        <span class="text-[10px] text-slate-400 block uppercase">Nomor Virtual Account Mandiri</span>
-                        <span class="text-xl font-mono font-black text-slate-800 tracking-wider">89012 0898765432</span>
-                        <p class="text-[11px] text-slate-600 mt-2">Atas Nama: <strong class="text-slate-800">NusantaraTrip Indonesia</strong></p>
+                        <span class="text-[10px] text-slate-500 block uppercase">Virtual Account Mandiri</span>
+                        <div class="flex items-center justify-center gap-2 mt-1">
+                            <span class="text-base font-mono font-black text-travel-400">89012 0898765432</span>
+                            <button onclick="navigator.clipboard.writeText('890120898765432'); alert('VA Mandiri Disalin!')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded">Copy</button>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-2">Atas Nama: NusantaraTrip Indonesia</p>
                     </div>
                 `;
             }
@@ -693,7 +782,6 @@
             const paxCount = parseInt(document.getElementById('formPaxCount').value) || 1;
             const totalCalcPrice = currentSelectedTrip.price * paxCount;
 
-            // Generate new Booking
             const newBookingId = '#TRIP-' + Math.floor(1000 + Math.random() * 9000);
             const newBooking = {
                 id: newBookingId,
@@ -707,42 +795,42 @@
                 date: new Date().toISOString().split('T')[0]
             };
 
-            // Push to memory
             bookingsData.unshift(newBooking);
             
-            // Update Admin UI Realtime
-            renderAdminTable();
+            renderAdminView();
             updateAdminStats();
 
-            // Populate Receipt
             document.getElementById('receiptTrxId').innerText = newBookingId;
             document.getElementById('receiptCust').innerText = custName + ' (' + custPhone + ')';
             document.getElementById('receiptTrip').innerText = currentSelectedTrip.title;
             document.getElementById('receiptPax').innerText = paxCount + ' Orang (Pax)';
             document.getElementById('receiptTotal').innerText = 'Rp ' + totalCalcPrice.toLocaleString('id-ID');
 
-            // Show Step 3
             document.getElementById('modalStep2').classList.add('hidden');
             document.getElementById('modalStep3').classList.remove('hidden');
         }
 
-        // --- 6. ADMIN TABLE & STATS LOGIC ---
-        function renderAdminTable() {
+        // --- 7. RENDER ADMIN VIEW (DESKTOP TABLE & MOBILE CARDS) ---
+        function renderAdminView() {
             const tbody = document.getElementById('adminTableBody');
+            const cardList = document.getElementById('adminMobileCardList');
             tbody.innerHTML = '';
+            cardList.innerHTML = '';
 
             if (bookingsData.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-500">Belum ada pendaftaran trip.</td></tr>`;
+                cardList.innerHTML = `<div class="text-center py-6 text-slate-500 text-xs">Belum ada pendaftaran trip.</div>`;
                 return;
             }
 
             bookingsData.forEach(item => {
                 const statusBadge = item.status === 'Lunas' 
-                    ? `<span class="bg-emerald-500/20 text-emerald-400 text-[10px] px-2.5 py-1 rounded-full font-bold border border-emerald-500/30">Lunas</span>`
-                    : `<span class="bg-amber-500/20 text-amber-400 text-[10px] px-2.5 py-1 rounded-full font-bold border border-amber-500/30">Proses</span>`;
+                    ? `<span class="bg-emerald-500/10 text-emerald-400 text-[10px] px-2.5 py-0.5 rounded-full font-bold border border-emerald-500/20">Lunas</span>`
+                    : `<span class="bg-amber-500/10 text-amber-400 text-[10px] px-2.5 py-0.5 rounded-full font-bold border border-amber-500/20">Proses</span>`;
 
+                // Desktop Table Row
                 const row = `
-                    <tr class="hover:bg-slate-700/40 transition">
+                    <tr class="hover:bg-slate-800/50 transition">
                         <td class="p-3.5 font-mono text-xs font-bold text-slate-200">${item.id}</td>
                         <td class="p-3.5">
                             <span class="block text-slate-100 font-bold">${item.custName}</span>
@@ -750,17 +838,40 @@
                         </td>
                         <td class="p-3.5 text-slate-300">${item.tripTitle}</td>
                         <td class="p-3.5 font-bold text-amber-400">${item.pax} Pax</td>
-                        <td class="p-3.5"><span class="bg-slate-700 px-2 py-0.5 rounded text-[10px] font-mono">${item.method}</span></td>
+                        <td class="p-3.5"><span class="bg-slate-900 px-2 py-0.5 rounded text-[10px] font-mono text-slate-300">${item.method}</span></td>
                         <td class="p-3.5 font-bold text-slate-100">Rp ${item.totalPrice.toLocaleString('id-ID')}</td>
                         <td class="p-3.5">${statusBadge}</td>
                         <td class="p-3.5 text-center">
-                            <button onclick="toggleBookingStatus('${item.id}')" class="text-[10px] bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-600 transition">
+                            <button onclick="toggleBookingStatus('${item.id}')" class="text-[10px] bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg transition">
                                 Ubah Status
                             </button>
                         </td>
                     </tr>
                 `;
                 tbody.innerHTML += row;
+
+                // Mobile Card Item
+                const card = `
+                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700/80 space-y-2">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                            <span class="font-mono text-xs font-bold text-travel-400">${item.id}</span>
+                            ${statusBadge}
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="font-bold text-white">${item.custName}</span>
+                            <span class="font-bold text-emerald-400">Rp ${item.totalPrice.toLocaleString('id-ID')}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 space-y-0.5">
+                            <p><i class="fa-solid fa-map-location-dot text-slate-500 mr-1"></i> ${item.tripTitle}</p>
+                            <p><i class="fa-solid fa-users text-slate-500 mr-1"></i> ${item.pax} Pax</p>
+                            <p><i class="fa-solid fa-wallet text-slate-500 mr-1"></i> ${item.method}</p>
+                        </div>
+                        <button onclick="toggleBookingStatus('${item.id}')" class="w-full mt-2 text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-200 py-1.5 rounded-lg font-bold border border-slate-700">
+                            Ubah Status Pendaftaran
+                        </button>
+                    </div>
+                `;
+                cardList.innerHTML += card;
             });
         }
 
@@ -768,7 +879,7 @@
             const item = bookingsData.find(b => b.id === bookingId);
             if (item) {
                 item.status = item.status === 'Lunas' ? 'Proses' : 'Lunas';
-                renderAdminTable();
+                renderAdminView();
                 updateAdminStats();
             }
         }
@@ -788,7 +899,7 @@
             document.getElementById('statSuccessBookings').innerText = successBookings;
         }
 
-        // --- 7. ADMIN ADD NEW TRIP LOGIC ---
+        // --- 8. ADMIN ADD TRIP LOGIC ---
         function openAddTripModal() {
             document.getElementById('addTripModal').classList.remove('hidden');
         }
@@ -824,7 +935,6 @@
             renderCatalogue();
             closeAddTripModal();
 
-            // Clear form
             document.getElementById('newTripTitle').value = '';
             document.getElementById('newTripPrice').value = '';
             document.getElementById('newTripDuration').value = '';
