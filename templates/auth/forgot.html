@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lupa Kata Sandi — OP Trip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-800 flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+
+    <div class="w-full max-w-md bg-white rounded-[32px] p-6 sm:p-8 shadow-2xl relative z-10 space-y-6 my-auto">
+        
+        <div class="flex items-center gap-2.5 justify-center">
+            <div class="w-9 h-9 rounded-xl bg-teal-500 text-white flex items-center justify-center font-black text-sm shadow-md shadow-teal-500/30">
+                OP
+            </div>
+            <span class="font-extrabold text-xl text-slate-900 tracking-tight">OP Trip<span class="text-teal-500">.id</span></span>
+        </div>
+
+        <div class="text-center space-y-1">
+            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Atur Ulang Kata Sandi 🔑</h1>
+            <p class="text-xs text-slate-500">Masukkan email kamu dan buat kata sandi baru</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-3.5 rounded-xl text-xs font-semibold border bg-red-50 border-red-200 text-red-600">
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="/forgot-password" method="POST" class="space-y-4">
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Email Terdaftar</label>
+                <input type="email" name="email" required placeholder="nama@email.com" class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 rounded-xl px-4 py-3 text-sm text-slate-800 outline-none transition">
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Kata Sandi Baru</label>
+                <input type="password" name="password" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 rounded-xl px-4 py-3 text-sm text-slate-800 outline-none transition">
+            </div>
+
+            <button type="submit" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-3.5 rounded-xl text-sm shadow-lg shadow-orange-600/25 transition duration-150">
+                Simpan Kata Sandi Baru
+            </button>
+        </form>
+
+        <div class="text-center text-xs text-slate-500 pt-4 border-t border-slate-100">
+            Ingat kata sandi? <a href="/login" class="text-teal-600 font-bold hover:underline">Kembali ke Login</a>
+        </div>
+
+    </div>
+</body>
+</html>

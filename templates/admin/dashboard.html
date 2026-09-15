@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control Panel — OP Trip.id</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+    <!-- Header Navbar Admin -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center font-black text-sm shadow-md shadow-orange-600/30">
+                    ADM
+                </div>
+                <span class="font-extrabold text-xl text-white tracking-tight">OP Trip<span class="text-teal-400"> Admin</span></span>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <a href="/dashboard" class="text-xs font-bold text-slate-400 hover:text-white transition">← Ke Web Traveler</a>
+                <a href="/logout" class="px-4 py-2 rounded-full bg-red-600/20 text-red-400 border border-red-500/30 text-xs font-bold hover:bg-red-600 hover:text-white transition">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-10">
+        
+        <!-- Flash Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-4 rounded-2xl text-xs font-bold border bg-teal-500/10 border-teal-500/30 text-teal-400">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Stat Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Paket Trip</span>
+                <div class="text-3xl font-black text-white">{{ total_trips }}</div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Booking masuk</span>
+                <div class="text-3xl font-black text-teal-400">{{ total_bookings }}</div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Omset Lunas</span>
+                <div class="text-3xl font-black text-orange-500">Rp {{ "{:,}".format(total_omset) }}</div>
+            </div>
+        </div>
+
+        <!-- Section 1: Form Tambah Trip Baru -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+            <h2 class="text-xl font-extrabold text-white">➕ Tambah Paket Open Trip Baru</h2>
+            
+            <form action="/admin/add-trip" method="POST" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400">Judul Trip</label>
+                    <input type="text" name="judul_trip" required placeholder="misal: Sailing Derawan" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-teal-500">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400">Destinasi</label>
+                    <input type="text" name="destinasi" required placeholder="misal: Derawan" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-teal-500">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400">Harga per Pax (Rp)</label>
+                    <input type="number" name="harga_per_pax" required placeholder="3500000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-teal-500">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400">Kuota Pax</label>
+                    <input type="number" name="sisa_kuota" required placeholder="10" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-teal-500">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400">Tanggal Berangkat</label>
+                    <input type="text" name="tanggal_berangkat" required placeholder="12 Desember 2026" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-teal-500">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400">Meeting Point</label>
+                    <input type="text" name="meeting_point" required placeholder="Bandara Tarakan" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-teal-500">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400">Durasi</label>
+                    <input type="text" name="durasi" required placeholder="3D2N" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-teal-500">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400">URL Gambar (Unsplash)</label>
+                    <input type="text" name="gambar_url" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-teal-500">
+                </div>
+
+                <div class="sm:col-span-2 md:col-span-4 pt-2">
+                    <button type="submit" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-extrabold py-3 rounded-xl text-xs shadow-lg transition">
+                        Simpan & Publish Trip Baru
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Section 2: Kelola Pesanan & ACC Bukti Bayar -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+            <h2 class="text-xl font-extrabold text-white">📋 Kelola Pemesanan Peserta</h2>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-950 text-slate-400 uppercase font-black tracking-wider">
+                        <tr>
+                            <th class="p-4 rounded-l-xl">Pemesan</th>
+                            <th class="p-4">Paket Trip</th>
+                            <th class="p-4">Pax</th>
+                            <th class="p-4">Total Tagihan</th>
+                            <th class="p-4">Bukti Bayar</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 rounded-r-xl">Aksi ACC</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        {% for b in bookings %}
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-4 font-bold text-white">
+                                {{ b[1] }}
+                                <span class="block text-[10px] font-normal text-slate-500">WA: {{ b[2] }}</span>
+                            </td>
+                            <td class="p-4 font-semibold text-teal-400">{{ b[3] }}</td>
+                            <td class="p-4 font-bold">{{ b[4] }} Pax</td>
+                            <td class="p-4 font-black text-orange-400">Rp {{ "{:,}".format(b[5]) }}</td>
+                            <td class="p-4">
+                                {% if b[6] %}
+                                    <a href="/static/uploads/{{ b[6] }}" target="_blank" class="text-teal-400 underline font-bold">Lihat Bukti</a>
+                                {% else %}
+                                    <span class="text-slate-600">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-4">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase {{ 'bg-teal-500/20 text-teal-300 border border-teal-500/40' if b[7] == 'lunas' else 'bg-amber-500/20 text-amber-300 border border-amber-500/40' }}">
+                                    {{ b[7] }}
+                                </span>
+                            </td>
+                            <td class="p-4">
+                                {% if b[7] != 'lunas' %}
+                                    <a href="/admin/update-booking/{{ b[0] }}/lunas" class="px-3 py-1.5 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold rounded-lg transition">Set Lunas</a>
+                                {% else %}
+                                    <a href="/admin/update-booking/{{ b[0] }}/pending" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-lg transition">Batal ACC</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+</body>
+</html>
