@@ -1,0 +1,302 @@
+<!-- FLOATING LIVE CHAT WIDGET ULTRA RESPONSIVE -->
+<div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 font-sans pointer-events-none">
+    
+    <!-- Chat Modal Window -->
+    <div id="chatModal" class="pointer-events-auto hidden flex flex-col w-[calc(100vw-2rem)] sm:w-[370px] max-w-sm bg-[#0b1329]/95 backdrop-blur-2xl rounded-[28px] shadow-2xl border border-white/15 overflow-hidden h-[75vh] sm:h-[510px] max-h-[580px] mb-3 transition-all duration-300 transform scale-90 opacity-0 origin-bottom-right">
+        
+        <!-- Chat Header -->
+        <div class="bg-gradient-to-r from-slate-950 via-[#0b1329] to-[#2563eb]/40 text-white p-3.5 sm:p-4 flex items-center justify-between border-b border-white/10 shadow-md relative shrink-0">
+            <div class="flex items-center gap-2.5 sm:gap-3">
+                <div class="relative">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-[#2563eb] to-[#38bdf8] p-0.5 shadow-lg">
+                        <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center font-black text-xs text-[#38bdf8]">
+                            CS
+                        </div>
+                    </div>
+                    <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-400 border-2 border-slate-950 animate-pulse"></span>
+                </div>
+                <div>
+                    <h4 class="font-black text-xs text-white flex items-center gap-1.5">
+                        <span>Live CS OP TRIP</span>
+                        <span class="px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase tracking-wider">Online</span>
+                    </h4>
+                    <span class="text-[10px] text-slate-400 font-medium block">Respon cepat &lt; 2 menit</span>
+                </div>
+            </div>
+            
+            <button type="button" onclick="toggleChat()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white border border-white/10 transition text-xs">
+                ✕
+            </button>
+        </div>
+
+        <!-- Quick Question Chips -->
+        <div class="bg-slate-950/60 border-b border-white/10 px-3 py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[11px] shrink-0">
+            <span class="text-[10px] font-black text-[#38bdf8] uppercase tracking-wider whitespace-nowrap">💡 Saran:</span>
+            <button type="button" onclick="quickAsk('Bagaimana cara konfirmasi pembayaran setelah transfer?')" class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-[#38bdf8]/20 hover:text-[#38bdf8] text-slate-300 font-semibold border border-white/10 whitespace-nowrap transition text-[10px]">
+                Cara Bayar?
+            </button>
+            <button type="button" onclick="quickAsk('Apakah paket trip sudah all-in dokumentasi drone?')" class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-[#38bdf8]/20 hover:text-[#38bdf8] text-slate-300 font-semibold border border-white/10 whitespace-nowrap transition text-[10px]">
+                Fasilitas?
+            </button>
+            <button type="button" onclick="quickAsk('Apakah ada minimal peserta untuk pasti berangkat?')" class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-[#38bdf8]/20 hover:text-[#38bdf8] text-slate-300 font-semibold border border-white/10 whitespace-nowrap transition text-[10px]">
+                Kuota?
+            </button>
+        </div>
+
+        <!-- Chat Messages Container -->
+        <div id="chatBox" class="flex-1 p-3.5 sm:p-4 overflow-y-auto space-y-3.5 text-xs flex flex-col relative scroll-smooth">
+            <div class="text-center text-slate-400 my-auto py-6 space-y-2">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/5 text-[#38bdf8] rounded-2xl flex items-center justify-center mx-auto text-xl sm:text-2xl font-bold border border-white/10">
+                    💬
+                </div>
+                <div class="font-bold text-white text-xs">Halo kak {{ session.get('nama_lengkap', 'Traveler') }}! 👋</div>
+                <div class="text-[10px] sm:text-[11px] text-slate-400 max-w-[220px] sm:max-w-[240px] mx-auto leading-relaxed">Ada yang bisa kami bantu mengenai reservasi, jadwal trip, atau konsultasi destinasi?</div>
+            </div>
+        </div>
+
+        <!-- Quick Emoji Shortcuts Bar -->
+        <div class="px-3 py-1 bg-slate-950/80 border-t border-white/5 flex items-center gap-2 text-sm text-slate-400 shrink-0">
+            <span class="text-[9px] font-bold uppercase text-slate-500">Emoji:</span>
+            <button type="button" onclick="insertEmoji('👋')" class="hover:scale-125 transition">👋</button>
+            <button type="button" onclick="insertEmoji('🏝️')" class="hover:scale-125 transition">🏝️</button>
+            <button type="button" onclick="insertEmoji('⛰️')" class="hover:scale-125 transition">⛰️</button>
+            <button type="button" onclick="insertEmoji('💳')" class="hover:scale-125 transition">💳</button>
+            <button type="button" onclick="insertEmoji('✅')" class="hover:scale-125 transition">✅</button>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form id="chatForm" onsubmit="sendChatMessage(event)" class="p-2.5 sm:p-3 bg-slate-950 border-t border-white/10 flex items-center gap-2 shrink-0">
+            <input type="text" id="chatInput" placeholder="Ketik pertanyaan kamu..." required autocomplete="off" class="flex-1 bg-white/5 border border-white/10 focus:border-[#38bdf8] focus:bg-white/10 rounded-xl px-3 py-2 sm:px-3.5 sm:py-2.5 text-xs text-white outline-none transition placeholder-slate-500">
+            
+            <button type="submit" id="chatSendBtn" class="bg-gradient-to-r from-[#2563eb] to-[#38bdf8] hover:from-[#38bdf8] hover:to-[#2563eb] text-white font-bold p-2 sm:p-2.5 rounded-xl transition shadow-lg shadow-[#2563eb]/20 flex items-center justify-center active:scale-95 shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+            </button>
+        </form>
+    </div>
+
+    <!-- Floating Button Trigger -->
+    <button type="button" id="chatTriggerBtn" onclick="toggleChat()" class="pointer-events-auto group relative bg-gradient-to-r from-[#2563eb] to-[#38bdf8] hover:from-[#38bdf8] hover:to-[#2563eb] text-white px-4 py-3 rounded-full shadow-2xl shadow-[#2563eb]/40 flex items-center justify-center gap-2 font-black text-xs active:scale-95 transition-all duration-300 border border-white/20 ml-auto">
+        
+        <span id="chatUnreadBadge" class="hidden absolute -top-1 -right-1 sm:-top-1.5 sm:-right-1.5 min-w-[18px] h-[18px] sm:min-w-[20px] sm:h-[20px] px-1 rounded-full bg-[#f97316] text-white text-[9px] sm:text-[10px] font-black flex items-center justify-center border-2 border-[#030712] shadow-lg animate-bounce">
+            0
+        </span>
+
+        <span class="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 sm:h-3 sm:w-3 bg-white"></span>
+        </span>
+        
+        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white transition-transform group-hover:rotate-12 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        
+        <span class="whitespace-nowrap text-xs font-black">Tanya CS</span>
+    </button>
+
+</div>
+
+<script>
+    const currentUserId = {{ session.get('user_id', 0) }};
+    let chatInterval = null;
+    let lastMessageCount = 0;
+    let audioCtx = null;
+
+    function playChatSound(type = 'receive') {
+        try {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'send') {
+                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } else {
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            }
+        } catch (e) {
+            console.log('Audio init handled');
+        }
+    }
+
+    function toggleChat() {
+        const modal = document.getElementById('chatModal');
+        const isHidden = modal.classList.contains('hidden');
+
+        if (isHidden) {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('scale-90', 'opacity-0');
+                modal.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            
+            const badge = document.getElementById('chatUnreadBadge');
+            badge.innerText = '0';
+            badge.classList.add('hidden');
+
+            loadChatMessages();
+            document.getElementById('chatInput').focus();
+            if (!chatInterval) {
+                chatInterval = setInterval(loadChatMessages, 2500);
+            }
+        } else {
+            modal.classList.remove('scale-100', 'opacity-100');
+            modal.classList.add('scale-90', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+            if (chatInterval) {
+                clearInterval(chatInterval);
+                chatInterval = null;
+            }
+        }
+    }
+
+    function quickAsk(text) {
+        const input = document.getElementById('chatInput');
+        input.value = text;
+        input.focus();
+    }
+
+    function insertEmoji(emoji) {
+        const input = document.getElementById('chatInput');
+        input.value += emoji;
+        input.focus();
+    }
+
+    // FUNGSI UTAMA KIRIM PESAN TRAVELER (DITAMBAHKAN)
+    async function sendChatMessage(e) {
+        e.preventDefault();
+        const input = document.getElementById('chatInput');
+        const pesan = input.value.trim();
+        if (!pesan) return;
+
+        const btn = document.getElementById('chatSendBtn');
+        btn.disabled = true;
+
+        try {
+            const res = await fetch('/api/chat/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pesan: pesan })
+            });
+
+            if (res.ok) {
+                playChatSound('send');
+                input.value = '';
+                await loadChatMessages();
+            }
+        } catch (err) {
+            console.error('Error send chat:', err);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async function loadChatMessages() {
+        try {
+            const res = await fetch('/api/chat/list');
+            if (!res.ok) return;
+            const data = await res.json();
+            const chatBox = document.getElementById('chatBox');
+            const modal = document.getElementById('chatModal');
+            const isChatOpen = !modal.classList.contains('hidden');
+
+            if (data.length > lastMessageCount && lastMessageCount !== 0) {
+                const latestMsg = data[data.length - 1];
+                if (latestMsg.role === 'admin' || latestMsg.user_id !== currentUserId) {
+                    playChatSound('receive');
+                    if (!isChatOpen) {
+                        const badge = document.getElementById('chatUnreadBadge');
+                        let currentCount = parseInt(badge.innerText) || 0;
+                        badge.innerText = currentCount + 1;
+                        badge.classList.remove('hidden');
+                    }
+                }
+            }
+            lastMessageCount = data.length;
+
+            if (data.length === 0) {
+                chatBox.innerHTML = `
+                    <div class="text-center text-slate-400 my-auto py-6 space-y-2">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/5 text-[#38bdf8] rounded-2xl flex items-center justify-center mx-auto text-xl sm:text-2xl font-bold border border-white/10">
+                            💬
+                        </div>
+                        <div class="font-bold text-white text-xs">Halo kak! Ada yang bisa kami bantu?</div>
+                        <div class="text-[10px] sm:text-[11px] text-slate-400 max-w-[220px] sm:max-w-[240px] mx-auto leading-relaxed">Ketik pesanmu di bawah, admin CS kami akan membalas secara langsung.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const currentScroll = chatBox.scrollTop;
+            const isNearBottom = (chatBox.scrollHeight - chatBox.clientHeight - currentScroll) < 90;
+
+            chatBox.innerHTML = '';
+            data.forEach(msg => {
+                const isMe = msg.user_id === currentUserId;
+                const isAdminMsg = msg.role === 'admin';
+                
+                const wrapper = document.createElement('div');
+                wrapper.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-1`;
+                
+                const meta = document.createElement('div');
+                meta.className = 'flex items-center gap-1.5 px-1';
+                meta.innerHTML = `
+                    <span class="text-[9px] font-black ${isAdminMsg ? 'text-[#38bdf8]' : 'text-slate-400'}">
+                        ${isAdminMsg ? '⭐ CS OP TRIP' : msg.nama_user}
+                    </span>
+                    <span class="text-[9px] text-slate-500">${msg.time || ''}</span>
+                `;
+
+                const bubble = document.createElement('div');
+                bubble.className = `p-2.5 sm:p-3 rounded-2xl max-w-[85%] text-xs leading-relaxed ${
+                    isAdminMsg 
+                        ? 'bg-[#2563eb] text-white rounded-tl-sm shadow-md font-medium border border-blue-400/20' 
+                        : (isMe 
+                            ? 'bg-gradient-to-r from-[#38bdf8] to-[#2563eb] text-slate-950 font-extrabold rounded-tr-sm shadow-md' 
+                            : 'bg-white/10 border border-white/10 text-white rounded-tl-sm shadow-sm')
+                }`;
+                
+                bubble.innerText = msg.pesan;
+
+                if (isMe) {
+                    const checkSpan = document.createElement('span');
+                    checkSpan.className = 'inline-block ml-1.5 text-[10px] text-slate-900/70 font-black';
+                    checkSpan.innerText = '✓✓';
+                    bubble.appendChild(checkSpan);
+                }
+
+                wrapper.appendChild(meta);
+                wrapper.appendChild(bubble);
+                chatBox.appendChild(wrapper);
+            });
+
+            if (isNearBottom || currentScroll === 0) {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        } catch (err) {
+            console.error('Chat error:', err);
+        }
+    }
+
+    setInterval(() => {
+        const modal = document.getElementById('chatModal');
+        if (modal && modal.classList.contains('hidden')) {
+            loadChatMessages();
+        }
+    }, 5000);
+</script>

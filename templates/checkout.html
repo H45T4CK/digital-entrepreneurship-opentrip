@@ -3,117 +3,483 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout Pemesanan — OP Trip.id</title>
+    <title>Checkout Pemesanan — OP TRIP.ID</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
-</head>
-<body class="bg-slate-50 text-slate-800 min-h-screen py-10 px-4">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style> 
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #030712;
+        }
 
-    <div class="max-w-3xl mx-auto space-y-6">
+        .glass-container {
+            background: rgba(11, 19, 41, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.75);
+        }
+
+        .glass-card {
+            background: rgba(11, 19, 41, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-input {
+            background: rgba(7, 13, 27, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-input:focus-within, .glass-input:focus {
+            border-color: rgba(56, 189, 248, 0.8);
+            background: rgba(11, 20, 42, 0.9);
+            box-shadow: 0 0 20px -3px rgba(56, 189, 248, 0.25);
+        }
+
+        @keyframes ambientFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.05); }
+        }
+
+        .animate-ambient { animation: ambientFloat 12s ease-in-out infinite; }
+    </style>
+</head>
+<body class="min-h-screen text-slate-100 py-10 px-4 sm:px-6 selection:bg-[#38bdf8] selection:text-slate-950 relative overflow-x-hidden">
+
+    <!-- Ambient Glowing Background -->
+    <div class="fixed -top-40 -left-40 w-[600px] h-[600px] bg-[#2563eb]/15 rounded-full blur-[160px] pointer-events-none animate-ambient"></div>
+    <div class="fixed top-1/2 -right-40 w-[500px] h-[500px] bg-[#38bdf8]/10 rounded-full blur-[160px] pointer-events-none animate-ambient" style="animation-delay: 4s;"></div>
+
+    <div class="max-w-4xl mx-auto space-y-6 relative z-10">
         
-        <a href="/trip/{{ trip[0] if trip else '' }}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition">
+        <!-- Navigation Header -->
+        <a href="/trip/{{ trip['id'] if trip else '' }}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-full transition backdrop-blur-md">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-            Kembali ke Detail Trip
+            <span>Kembali ke Detail Trip</span>
         </a>
 
         {% if berhasil %}
-            <div class="bg-white rounded-3xl p-10 border border-slate-200 shadow-xl text-center space-y-5">
-                <div class="w-20 h-20 rounded-full bg-teal-100 text-teal-600 mx-auto flex items-center justify-center font-bold text-4xl shadow-inner">
+            <!-- SUCCESS STATE SCREEN -->
+            <div class="glass-container rounded-[36px] p-8 sm:p-12 text-center space-y-6 max-w-xl mx-auto border border-emerald-500/30">
+                <div class="w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 mx-auto flex items-center justify-center font-black text-4xl shadow-lg animate-bounce">
                     ✓
                 </div>
+                
                 <div class="space-y-2">
-                    <h2 class="text-3xl font-extrabold text-slate-900">Pemesanan Berhasil! 🎉</h2>
-                    <p class="text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
-                        Terima kasih <b>{{ session['nama_lengkap'] }}</b>, pesanan kamu sedang diproses dan diverifikasi oleh admin OP Trip.
+                    <span class="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+                        Pesanan Telah Masuk!
+                    </span>
+                    <h2 class="text-3xl font-black text-white">Reservasi Berhasil Diajukan 🎉</h2>
+                    <p class="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed font-medium">
+                        Terima kasih <b>{{ session['nama_lengkap'] }}</b>! Bukti transfer kamu telah berhasil diunggah dan sedang diverifikasi oleh admin kami.
                     </p>
                 </div>
-                <div class="pt-6">
-                    <a href="/dashboard" class="px-8 py-3.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold shadow-lg active:scale-95 transition-all">
-                        Kembali ke Dashboard
+
+                <!-- Info Box -->
+                <div class="glass-card rounded-2xl p-5 text-left space-y-2 text-xs border border-white/10">
+                    <div class="flex justify-between py-1 border-b border-white/10">
+                        <span class="text-slate-400">Nomor Registrasi:</span>
+                        <span class="font-black text-[#38bdf8] font-mono">#OPT-{{ "%05d"|format(booking_id) }}</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-white/10">
+                        <span class="text-slate-400">Paket Trip:</span>
+                        <span class="font-extrabold text-white">{{ trip['judul_trip'] if trip else '' }}</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-white/10">
+                        <span class="text-slate-400">Jumlah Peserta:</span>
+                        <span class="font-extrabold text-slate-200">{{ jumlah_pax }} Pax</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-400">Total Nominal:</span>
+                        <span class="font-black text-[#f97316] text-sm">Rp {{ "{:,.0f}".format(total_harga).replace(',', '.') }}</span>
+                    </div>
+                </div>
+
+                <!-- CTAs -->
+                <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <a href="/invoice/{{ booking_id }}" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#38bdf8] hover:from-[#38bdf8] hover:to-[#2563eb] text-white font-extrabold text-xs shadow-lg shadow-[#2563eb]/20 transition flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                        <span>Lihat & Cetak Invoice</span>
+                    </a>
+                    <a href="/riwayat" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-white font-extrabold text-xs border border-white/10 transition">
+                        Pantau di Riwayat Pesanan →
                     </a>
                 </div>
             </div>
+
         {% else %}
             
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                <!-- Form Kiri -->
-                <div class="md:col-span-7 bg-white rounded-[32px] p-6 sm:p-8 border border-slate-200 shadow-xl space-y-6">
-                    <div class="border-b border-slate-100 pb-4 space-y-1">
-                        <h1 class="text-2xl font-extrabold text-slate-900">Form Pemesanan 📝</h1>
-                        <p class="text-xs text-slate-500">Lengkapi jumlah peserta dan upload bukti transfer</p>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Form Kiri (7 Kolom) -->
+                <div class="lg:col-span-7 glass-container rounded-[36px] p-6 sm:p-8 space-y-6">
+                    <div class="border-b border-white/10 pb-4 space-y-1">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-[#38bdf8] block">Langkah Terakhir</span>
+                        <h1 class="text-2xl font-black text-white">Formulir Pemesanan 📝</h1>
+                        <p class="text-xs text-slate-400">Tentukan jumlah peserta dan selesaikan pembayaran untuk mengamankan kursi.</p>
                     </div>
 
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-2">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-teal-600">Paket Terpilih</span>
-                        <h3 class="font-extrabold text-base text-slate-900">{{ trip[1] }}</h3>
-                        <div class="flex justify-between items-center pt-2 text-xs border-t border-slate-200/60 mt-2 pt-2">
-                            <span class="text-slate-500">Harga/pax: <b class="text-slate-800">Rp {{ "{:,}".format(trip[3]) }}</b></span>
-                            <span class="text-slate-500">Sisa Kuota: <b class="text-orange-600">{{ trip[4] }} Pax</b></span>
+                    <!-- Ringkasan Paket Terpilih -->
+                    <div class="glass-card rounded-2xl p-4 border border-white/10 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-black uppercase text-[#38bdf8] bg-[#38bdf8]/10 border border-[#38bdf8]/30 px-2 py-0.5 rounded">
+                                {{ trip['kategori'] or 'Open Trip' }}
+                            </span>
+                            <span class="text-xs text-slate-400 font-bold">📍 {{ trip['destinasi'] }}</span>
+                        </div>
+                        <h3 class="font-black text-base text-white leading-snug">{{ trip['judul_trip'] }}</h3>
+                        
+                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-white/10 text-xs text-slate-300">
+                            <div>
+                                <span class="text-[10px] text-slate-400 uppercase font-bold block">Tarif per Pax:</span>
+                                <b class="text-white text-sm">Rp {{ "{:,.0f}".format(trip['harga_per_pax']).replace(',', '.') }}</b>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 uppercase font-bold block">Sisa Kuota:</span>
+                                <b class="text-[#f97316] text-sm">{{ trip['sisa_kuota'] }} Pax Tersedia</b>
+                            </div>
                         </div>
                     </div>
 
-                    <form action="" method="POST" enctype="multipart/form-data" class="space-y-5">
+                    <form action="" method="POST" enctype="multipart/form-data" class="space-y-6">
+                        
+                        <!-- Jumlah Pax Counter -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs font-black text-slate-300 uppercase tracking-wider">Jumlah Peserta (Pax)</label>
+                                <span class="text-[11px] text-slate-400">Maks. {{ trip['sisa_kuota'] }} pax</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-3">
+                                <button type="button" onclick="adjustPax(-1)" class="w-11 h-11 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 font-black text-lg text-white transition flex items-center justify-center active:scale-95">
+                                    -
+                                </button>
+                                <input type="number" id="jumlah_pax" name="jumlah_pax" min="1" max="{{ trip['sisa_kuota'] }}" value="1" required class="flex-1 text-center glass-input rounded-xl py-2.5 text-base font-black text-white outline-none">
+                                <button type="button" onclick="adjustPax(1)" class="w-11 h-11 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 font-black text-lg text-white transition flex items-center justify-center active:scale-95">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Total Tagihan Display -->
+                        <div class="glass-card border border-[#38bdf8]/30 bg-[#2563eb]/10 p-5 rounded-2xl flex justify-between items-center shadow-lg">
+                            <div>
+                                <span class="text-[10px] font-black uppercase tracking-wider text-[#38bdf8] block">Total Tagihan:</span>
+                                <span class="text-[11px] text-slate-300 font-semibold" id="pax_summary">1 Pax x Rp {{ "{:,.0f}".format(trip['harga_per_pax']).replace(',', '.') }}</span>
+                            </div>
+                            <span class="text-2xl font-black text-[#38bdf8]" id="total_display">
+                                Rp {{ "{:,.0f}".format(trip['harga_per_pax']).replace(',', '.') }}
+                            </span>
+                        </div>
+
+                        <!-- Pilihan Metode Pembayaran Lengkap dengan Logo Terverifikasi -->
+                        <div class="space-y-3">
+                            <label class="text-xs font-black text-slate-300 uppercase tracking-wider block">Pilih Rekening Tujuan / QRIS</label>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                <!-- BCA -->
+                                <label class="p-3.5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#38bdf8]/40 cursor-pointer flex items-center gap-3 transition">
+                                    <input type="radio" name="metode_pembayaran" value="Transfer Bank BCA" checked class="text-[#38bdf8] focus:ring-[#38bdf8]">
+                                    <div class="flex items-center justify-between w-full">
+                                        <div>
+                                            <b class="text-white block font-black">Bank BCA</b>
+                                            <span class="text-[10px] text-slate-400 font-mono">123-456-7890</span>
+                                        </div>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg" alt="BCA" class="h-3.5 w-auto object-contain bg-white px-1.5 py-0.5 rounded">
+                                    </div>
+                                </label>
+
+                                <!-- Mandiri -->
+                                <label class="p-3.5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#38bdf8]/40 cursor-pointer flex items-center gap-3 transition">
+                                    <input type="radio" name="metode_pembayaran" value="Transfer Bank Mandiri" class="text-[#38bdf8] focus:ring-[#38bdf8]">
+                                    <div class="flex items-center justify-between w-full">
+                                        <div>
+                                            <b class="text-white block font-black">Bank Mandiri</b>
+                                            <span class="text-[10px] text-slate-400 font-mono">987-654-3210</span>
+                                        </div>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg" alt="Mandiri" class="h-3.5 w-auto object-contain bg-white px-1.5 py-0.5 rounded">
+                                    </div>
+                                </label>
+
+                                <!-- BRI -->
+                                <label class="p-3.5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#38bdf8]/40 cursor-pointer flex items-center gap-3 transition">
+                                    <input type="radio" name="metode_pembayaran" value="Transfer Bank BRI" class="text-[#38bdf8] focus:ring-[#38bdf8]">
+                                    <div class="flex items-center justify-between w-full">
+                                        <div>
+                                            <b class="text-white block font-black">Bank BRI</b>
+                                            <span class="text-[10px] text-slate-400 font-mono">0011-2233-4455</span>
+                                        </div>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2e/BRI_2020.svg" alt="BRI" class="h-3.5 w-auto object-contain bg-white px-1.5 py-0.5 rounded">
+                                    </div>
+                                </label>
+
+                                <!-- BNI -->
+                                <label class="p-3.5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#38bdf8]/40 cursor-pointer flex items-center gap-3 transition">
+                                    <input type="radio" name="metode_pembayaran" value="Transfer Bank BNI" class="text-[#38bdf8] focus:ring-[#38bdf8]">
+                                    <div class="flex items-center justify-between w-full">
+                                        <div>
+                                            <b class="text-white block font-black">Bank BNI</b>
+                                            <span class="text-[10px] text-slate-400 font-mono">5544-3322-1100</span>
+                                        </div>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f0/Bank_Negara_Indonesia_logo_%282004%29.svg" alt="BNI" class="h-3.5 w-auto object-contain bg-white px-1.5 py-0.5 rounded">
+                                    </div>
+                                </label>
+
+                                <!-- BTN -->
+                                <label class="p-3.5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#38bdf8]/40 cursor-pointer flex items-center gap-3 transition">
+                                    <input type="radio" name="metode_pembayaran" value="Transfer Bank BTN" class="text-[#38bdf8] focus:ring-[#38bdf8]">
+                                    <div class="flex items-center justify-between w-full">
+                                        <div>
+                                            <b class="text-white block font-black">Bank BTN</b>
+                                            <span class="text-[10px] text-slate-400 font-mono">7788-9900-1122</span>
+                                        </div>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/BTN_2024.svg" alt="BTN" class="h-3.5 w-auto object-contain bg-white px-1.5 py-0.5 rounded">
+                                    </div>
+                                </label>
+
+                                <!-- CIMB Niaga -->
+                                <label class="p-3.5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#38bdf8]/40 cursor-pointer flex items-center gap-3 transition">
+                                    <input type="radio" name="metode_pembayaran" value="Transfer CIMB Niaga" class="text-[#38bdf8] focus:ring-[#38bdf8]">
+                                    <div class="flex items-center justify-between w-full">
+                                        <div>
+                                            <b class="text-white block font-black">CIMB Niaga</b>
+                                            <span class="text-[10px] text-slate-400 font-mono">8899-0011-2233</span>
+                                        </div>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/CIMB_Niaga_logo.svg" alt="CIMB Niaga" class="h-3.5 w-auto object-contain bg-white px-1.5 py-0.5 rounded">
+                                    </div>
+                                </label>
+
+                                <!-- QRIS Instant -->
+                                <label class="p-3.5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#38bdf8]/40 cursor-pointer flex items-center gap-3 transition sm:col-span-2">
+                                    <input type="radio" name="metode_pembayaran" value="QRIS Instant" class="text-[#38bdf8] focus:ring-[#38bdf8]">
+                                    <div class="flex items-center justify-between w-full">
+                                        <div>
+                                            <b class="text-white block font-black">QRIS Instant (Semua e-Wallet & m-Banking)</b>
+                                            <span class="text-[10px] text-[#38bdf8] font-bold">Gopay, OVO, DANA, ShopeePay, LinkAja, BCA/Mandiri Mobile</span>
+                                        </div>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/QRIS_Logo.svg" alt="QRIS" class="h-4 w-auto object-contain bg-white px-2 py-0.5 rounded">
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Catatan Pesanan -->
                         <div class="space-y-1.5">
-                            <label class="text-xs font-black text-slate-700 uppercase tracking-wider">Jumlah Peserta (Pax)</label>
-                            <input type="number" id="jumlah_pax" name="jumlah_pax" min="1" max="{{ trip[4] }}" value="1" required class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 outline-none transition">
+                            <label class="text-xs font-black text-slate-300 uppercase tracking-wider">Catatan Khusus (Opsional)</label>
+                            <textarea name="catatan_pesanan" rows="2" placeholder="Contoh: Titik jemput khusus, alergi makanan, ukuran pelampung..." class="w-full glass-input rounded-xl p-3 text-xs text-white outline-none placeholder-slate-500"></textarea>
                         </div>
 
-                        <div class="bg-teal-50 border border-teal-200/80 p-5 rounded-2xl flex justify-between items-center shadow-sm">
-                            <span class="text-xs font-black uppercase tracking-wider text-teal-800">Total Tagihan:</span>
-                            <span class="text-2xl font-black text-teal-700" id="total_display">Rp {{ "{:,}".format(trip[3]) }}</span>
+                        <!-- Unggah Bukti Transfer dengan Live Preview -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-slate-300 uppercase tracking-wider block">Unggah Bukti Transfer / Resi Bayar</label>
+                            <input type="file" name="bukti_transfer" accept="image/*" required onchange="previewReceipt(this)" class="w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#2563eb] file:text-white hover:file:bg-[#38bdf8] transition cursor-pointer">
+                            <small class="text-[10px] text-slate-500 block">Format yang didukung: JPG, PNG, WEBP (Maksimal 5MB)</small>
+
+                            <!-- Receipt Preview Container -->
+                            <div id="receiptPreviewBox" class="hidden pt-2">
+                                <span class="text-[10px] font-bold text-[#38bdf8] uppercase block mb-1">Pratinjau Bukti yang Dipilih:</span>
+                                <img id="receiptPreviewImg" src="" alt="Pratinjau Resi" class="max-h-48 rounded-xl border border-white/10 shadow-sm object-contain bg-slate-900/50 p-2">
+                            </div>
                         </div>
 
-                        <div class="space-y-1.5">
-                            <label class="text-xs font-black text-slate-700 uppercase tracking-wider">Unggah Bukti Transfer</label>
-                            <input type="file" name="bukti_transfer" accept="image/*" required class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-white hover:file:bg-slate-700 transition cursor-pointer">
-                            <small class="text-[10px] text-slate-400 block mt-1">Format: JPG, PNG (Maks 2MB)</small>
-                        </div>
-
-                        <button type="submit" class="w-full bg-orange-600 hover:bg-orange-500 active:scale-[0.99] text-white font-bold py-3.5 rounded-xl text-sm shadow-lg shadow-orange-600/25 transition">
-                            Kirim & Konfirmasi Bayar
+                        <button type="submit" class="w-full bg-gradient-to-r from-[#2563eb] to-[#38bdf8] hover:from-[#38bdf8] hover:to-[#2563eb] active:scale-[0.99] text-white font-black py-4 rounded-2xl text-sm shadow-xl shadow-[#2563eb]/25 transition flex items-center justify-center gap-2">
+                            <span>Kirim Bukti Pembayaran & Konfirmasi</span>
+                            <span>→</span>
                         </button>
                     </form>
                 </div>
 
-                <!-- Panel Kanan: Mockup QRIS -->
-                <div class="md:col-span-5 bg-slate-900 rounded-[32px] p-6 sm:p-8 shadow-xl text-center flex flex-col items-center justify-center space-y-6">
-                    <div class="space-y-2 text-white">
-                        <h3 class="font-extrabold text-xl">Pembayaran Praktis</h3>
-                        <p class="text-xs text-slate-400">Scan QRIS di bawah ini melalui m-Banking atau e-Wallet kesayanganmu.</p>
-                    </div>
+                <!-- Panel Kanan: Rekening Bank Kerjasama & Template QRIS MPM (5 Kolom) -->
+                <div class="lg:col-span-5 space-y-6">
                     
-                    <div class="bg-white p-5 rounded-2xl shadow-lg w-full max-w-[240px]">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QRIS OP Trip" class="w-full h-auto aspect-square object-contain opacity-80">
-                        <div class="mt-3 pt-3 border-t border-slate-200">
-                            <span class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">Merchant Name</span>
-                            <span class="block text-sm font-extrabold text-slate-800">OP Trip Indonesia</span>
+                    <!-- Bank Accounts Box (Lengkap 6 Bank) -->
+                    <div class="glass-container rounded-[32px] p-6 space-y-4">
+                        <div class="border-b border-white/10 pb-3">
+                            <h3 class="font-black text-base text-white">Rekening Resmi OP TRIP 💳</h3>
+                            <p class="text-[11px] text-slate-400">a/n PT Jelajah Petualang Nusantara</p>
+                        </div>
+
+                        <div class="space-y-2.5 text-xs">
+                            <!-- BCA -->
+                            <div class="glass-card p-3 rounded-2xl flex items-center justify-between border border-white/10">
+                                <div>
+                                    <span class="font-extrabold text-[#38bdf8] block">Bank BCA</span>
+                                    <span class="font-black text-sm text-white font-mono" id="rekBCA">1234567890</span>
+                                </div>
+                                <button type="button" onclick="copyRek('1234567890', this)" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-[11px] border border-white/10 transition">
+                                    Salin
+                                </button>
+                            </div>
+
+                            <!-- Mandiri -->
+                            <div class="glass-card p-3 rounded-2xl flex items-center justify-between border border-white/10">
+                                <div>
+                                    <span class="font-extrabold text-[#38bdf8] block">Bank Mandiri</span>
+                                    <span class="font-black text-sm text-white font-mono" id="rekMandiri">9876543210</span>
+                                </div>
+                                <button type="button" onclick="copyRek('9876543210', this)" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-[11px] border border-white/10 transition">
+                                    Salin
+                                </button>
+                            </div>
+
+                            <!-- BRI -->
+                            <div class="glass-card p-3 rounded-2xl flex items-center justify-between border border-white/10">
+                                <div>
+                                    <span class="font-extrabold text-[#38bdf8] block">Bank BRI</span>
+                                    <span class="font-black text-sm text-white font-mono" id="rekBRI">001122334455</span>
+                                </div>
+                                <button type="button" onclick="copyRek('001122334455', this)" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-[11px] border border-white/10 transition">
+                                    Salin
+                                </button>
+                            </div>
+
+                            <!-- BNI -->
+                            <div class="glass-card p-3 rounded-2xl flex items-center justify-between border border-white/10">
+                                <div>
+                                    <span class="font-extrabold text-[#38bdf8] block">Bank BNI</span>
+                                    <span class="font-black text-sm text-white font-mono" id="rekBNI">554433221100</span>
+                                </div>
+                                <button type="button" onclick="copyRek('554433221100', this)" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-[11px] border border-white/10 transition">
+                                    Salin
+                                </button>
+                            </div>
+
+                            <!-- BTN -->
+                            <div class="glass-card p-3 rounded-2xl flex items-center justify-between border border-white/10">
+                                <div>
+                                    <span class="font-extrabold text-[#38bdf8] block">Bank BTN</span>
+                                    <span class="font-black text-sm text-white font-mono" id="rekBTN">778899001122</span>
+                                </div>
+                                <button type="button" onclick="copyRek('778899001122', this)" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-[11px] border border-white/10 transition">
+                                    Salin
+                                </button>
+                            </div>
+
+                            <!-- CIMB Niaga -->
+                            <div class="glass-card p-3 rounded-2xl flex items-center justify-between border border-white/10">
+                                <div>
+                                    <span class="font-extrabold text-[#38bdf8] block">Bank CIMB Niaga</span>
+                                    <span class="font-black text-sm text-white font-mono" id="rekCIMB">889900112233</span>
+                                </div>
+                                <button type="button" onclick="copyRek('889900112233', this)" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-[11px] border border-white/10 transition">
+                                    Salin
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="flex items-center gap-3 justify-center opacity-70">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Logo_Gopay.png" class="h-4 brightness-0 invert" alt="Gopay">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Ovo_logo.svg/1200px-Ovo_logo.svg.png" class="h-4 brightness-0 invert" alt="OVO">
-                        <span class="text-xs font-bold text-white">BCA / Mandiri</span>
+
+                    <!-- TEMPLATE RESMI QRIS MPM (MERCHANT PRESENTED MODE) -->
+                    <div class="glass-container text-white rounded-[32px] p-6 shadow-xl text-center space-y-4 border border-white/10">
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-black uppercase text-[#38bdf8] tracking-wider">Scan Cepat Bebas Admin</span>
+                            <h4 class="font-black text-lg">QRIS Standar Nasional</h4>
+                            <p class="text-[11px] text-slate-400">Dukungan GoPay, OVO, ShopeePay, DANA, LinkAja, BCA Mobile, Livin, BRImo.</p>
+                        </div>
+
+                        <!-- Card QRIS MPM Asli Template -->
+                        <div class="bg-white text-slate-900 rounded-3xl p-5 shadow-2xl relative overflow-hidden max-w-[280px] mx-auto space-y-3 text-left">
+                            
+                            <!-- Red Geometric Corner Trims (Visual Resmi QRIS MPM) -->
+                            <div class="absolute top-10 -left-6 w-12 h-20 bg-red-600 -rotate-45 pointer-events-none"></div>
+                            <div class="absolute -bottom-8 -right-8 w-24 h-24 bg-red-600 rotate-45 pointer-events-none"></div>
+
+                            <!-- Header Logos: QRIS Left, GPN Right -->
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-2 relative z-10">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/QRIS_Logo.svg" alt="QRIS" class="h-5 w-auto object-contain">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Gerbang_Pembayaran_Nasional_logo.svg" alt="GPN" class="h-6 w-auto object-contain">
+                            </div>
+
+                            <!-- Merchant Detail -->
+                            <div class="text-center space-y-0.5 relative z-10 pt-1">
+                                <h5 class="font-black text-xs uppercase text-slate-900 tracking-tight">OP TRIP INDONESIA</h5>
+                                <p class="text-[9px] font-mono text-slate-600 font-bold">NMID: ID1020260089201</p>
+                            </div>
+
+                            <!-- Dynamic QR Code Container -->
+                            <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-inner relative z-10 w-44 h-44 mx-auto flex items-center justify-center">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=00020101021226600014ID.LINKAJA.WWW01189360091100000000005204581253033605802ID5918OP%20TRIP%20INDONESIA6007JAKARTA63041D3B" alt="QRIS OP Trip" class="w-full h-full object-contain">
+                            </div>
+
+                            <!-- SATU QRIS UNTUK SEMUA Footer -->
+                            <div class="text-center relative z-10 pt-1 border-t border-slate-100">
+                                <span class="text-[9px] font-black uppercase tracking-wider text-slate-800 block">SATU QRIS UNTUK SEMUA</span>
+                                <span class="text-[7px] text-slate-500 block font-mono">Cek aplikasi penyelenggara di: www.aspi-qris.id</span>
+                            </div>
+
+                        </div>
                     </div>
+
                 </div>
+
             </div>
+
         {% endif %}
 
     </div>
 
-    <!-- Script Kalkulasi Total -->
+    <!-- Script Kalkulasi & Pratinjau -->
     <script>
-        const hargaPerPax = {{ trip[3] if trip else 0 }};
+        const hargaPerPax = {{ trip['harga_per_pax'] if trip else 0 }};
+        const maxQuota = {{ trip['sisa_kuota'] if trip else 1 }};
         const inputPax = document.getElementById('jumlah_pax');
         const displayTotal = document.getElementById('total_display');
+        const paxSummary = document.getElementById('pax_summary');
 
-        if(inputPax) {
-            inputPax.addEventListener('input', function() {
-                let pax = parseInt(this.value) || 1;
-                let total = pax * hargaPerPax;
-                displayTotal.innerText = 'Rp ' + total.toLocaleString('id-ID');
-            });
+        function adjustPax(change) {
+            if (!inputPax) return;
+            let current = parseInt(inputPax.value) || 1;
+            let target = current + change;
+            if (target >= 1 && target <= maxQuota) {
+                inputPax.value = target;
+                updateCalculation();
+            }
+        }
+
+        function updateCalculation() {
+            if (!inputPax) return;
+            let pax = parseInt(inputPax.value) || 1;
+            if (pax < 1) pax = 1;
+            if (pax > maxQuota) pax = maxQuota;
+            inputPax.value = pax;
+
+            let total = pax * hargaPerPax;
+            displayTotal.innerText = 'Rp ' + total.toLocaleString('id-ID');
+            paxSummary.innerText = `${pax} Pax x Rp ${hargaPerPax.toLocaleString('id-ID')}`;
+        }
+
+        if (inputPax) {
+            inputPax.addEventListener('input', updateCalculation);
+        }
+
+        function copyRek(text, btn) {
+            navigator.clipboard.writeText(text);
+            const originalText = btn.innerText;
+            btn.innerText = '✓ Tersalin!';
+            btn.classList.add('text-[#38bdf8]');
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.remove('text-[#38bdf8]');
+            }, 1500);
+        }
+
+        function previewReceipt(input) {
+            const file = input.files[0];
+            const box = document.getElementById('receiptPreviewBox');
+            const img = document.getElementById('receiptPreviewImg');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    box.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            } else {
+                box.classList.add('hidden');
+            }
         }
     </script>
 </body>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Ticket & Invoice #{{ ref_code }} — OP TRIP.ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+128&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #030712;
+        }
+
+        .font-barcode {
+            font-family: 'Libre Barcode 128', cursive;
+        }
+
+        .glass-container {
+            background: rgba(11, 19, 41, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7);
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        @keyframes ambientFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(15px, -15px) scale(1.05); }
+        }
+
+        .animate-ambient { animation: ambientFloat 12s ease-in-out infinite; }
+
+        /* ================= KHUSUS CETAK PDF 1 HALAMAN PRESISI ================= */
+        @media print {
+            .no-print, .no-print * { 
+                display: none !important; 
+            }
+            
+            .hidden { 
+                display: none !important; 
+            }
+
+            html, body { 
+                background: #ffffff !important; 
+                color: #0f172a !important; 
+                padding: 0 !important; 
+                margin: 0 !important;
+                height: 100% !important;
+                max-height: 100vh !important;
+                overflow: hidden !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .print-area {
+                background: #ffffff !important;
+                border: 1.5px solid #cbd5e1 !important;
+                box-shadow: none !important;
+                color: #0f172a !important;
+                border-radius: 16px !important;
+                padding: 16px !important;
+                margin: 0 auto !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+                page-break-before: avoid !important;
+            }
+
+            .text-white, .text-slate-100, .text-slate-200, .text-slate-300, .text-slate-400 {
+                color: #0f172a !important;
+            }
+
+            .text-slate-500, .text-slate-600 {
+                color: #475569 !important;
+            }
+
+            .text-\[\#38bdf8\] { color: #0284c7 !important; }
+            .text-\[\#f97316\] { color: #ea580c !important; }
+
+            .bg-white\/5, .bg-white\/10, .glass-card, .glass-container {
+                background: #f8fafc !important;
+                border-color: #cbd5e1 !important;
+                box-shadow: none !important;
+            }
+
+            .border-white\/10, .border-white\/15, .border-white\/20 {
+                border-color: #cbd5e1 !important;
+            }
+
+            .notch-circle {
+                background-color: #ffffff !important;
+                border-color: #cbd5e1 !important;
+            }
+
+            @page { 
+                margin: 5mm; 
+                size: A4 portrait; 
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-100 py-4 sm:py-6 px-3 sm:px-6 selection:bg-[#38bdf8] selection:text-slate-950 relative overflow-x-hidden">
+
+    <!-- Ambient Glow BG -->
+    <div class="fixed -top-40 -left-40 w-[500px] h-[500px] bg-[#2563eb]/15 rounded-full blur-[140px] pointer-events-none animate-ambient no-print"></div>
+    <div class="fixed top-1/2 -right-40 w-[450px] h-[450px] bg-[#38bdf8]/10 rounded-full blur-[140px] pointer-events-none animate-ambient no-print" style="animation-delay: 4s;"></div>
+
+    <div class="max-w-4xl mx-auto space-y-4 relative z-10">
+
+        <!-- Action Toolbar Top Header (No Print) -->
+        <div class="no-print space-y-3">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 glass-container p-3 sm:p-4 rounded-2xl border border-white/10">
+                <a href="javascript:history.back()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-xs font-bold text-slate-300 hover:text-white transition bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl border border-white/10">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    <span>Kembali</span>
+                </a>
+                
+                <!-- Switcher Tab Buttons -->
+                <div class="flex items-center bg-slate-950/80 p-1 rounded-2xl border border-white/10 w-full sm:w-auto">
+                    <button type="button" id="btnTabTicket" onclick="switchView('ticket')" class="flex-1 sm:flex-none px-4 sm:px-5 py-2 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 bg-gradient-to-r from-[#2563eb] to-[#38bdf8] text-white shadow-lg shadow-[#2563eb]/20">
+                        <span>🎟️ Boarding Pass</span>
+                    </button>
+                    <button type="button" id="btnTabInvoice" onclick="switchView('invoice')" class="flex-1 sm:flex-none px-4 sm:px-5 py-2 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white">
+                        <span>🧾 Invoice Resmi</span>
+                    </button>
+                </div>
+
+                <button onclick="window.print()" class="w-full sm:w-auto px-5 py-2 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#38bdf8] hover:from-[#38bdf8] hover:to-[#2563eb] text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-[#2563eb]/20 transition active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                    <span>Cetak PDF (1 Halaman)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 1: E-TICKET BOARDING PASS ================= -->
+        <div id="viewTicket" class="space-y-4">
+            
+            <div class="glass-container rounded-[28px] sm:rounded-[32px] overflow-hidden border border-white/15 shadow-2xl relative p-4 sm:p-6 md:p-8 print-area">
+                
+                <!-- Ticket Top Header -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-white/10 gap-2.5">
+                    <div class="flex items-center gap-2.5">
+                        <img src="/static/logo.png" alt="OP TRIP.ID" class="h-8 sm:h-9 w-auto object-contain" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=100';">
+                        <div>
+                            <span class="text-[9px] font-black text-[#38bdf8] uppercase tracking-widest block">OFFICIAL BOARDING PASS</span>
+                            <h2 class="text-base sm:text-lg font-black text-white tracking-tight">OPEN TRIP TICKET</h2>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between w-full sm:w-auto gap-2.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/5">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border {{ 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' if booking['status_pembayaran'] == 'lunas' else 'bg-amber-400/15 text-amber-300 border-amber-400/30' }}">
+                            {{ '✓ VERIFIED PASS' if booking['status_pembayaran'] == 'lunas' else '⏳ PENDING' }}
+                        </span>
+                        <span class="font-mono text-xs font-black text-slate-400">#{{ ref_code }}</span>
+                    </div>
+                </div>
+
+                <!-- Ticket Content Grid -->
+                <div class="flex flex-col md:flex-row gap-5 md:gap-6 py-5 items-stretch">
+                    
+                    <!-- Left Section: Details -->
+                    <div class="flex-1 space-y-4">
+                        
+                        <!-- Destinasi Highlight -->
+                        <div class="space-y-0.5">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-[#38bdf8]">Destinasi Perjalanan</span>
+                            <h1 class="text-xl sm:text-2xl md:text-3xl font-black text-white leading-tight">
+                                {{ booking['judul_trip'] }}
+                            </h1>
+                            <p class="text-xs font-bold text-slate-400">📍 {{ booking['destinasi'] }}</p>
+                        </div>
+
+                        <!-- Info Grid -->
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                            <div class="glass-card p-2.5 rounded-xl border border-white/10 col-span-2 sm:col-span-1">
+                                <span class="text-[8px] font-black uppercase tracking-wider text-slate-400 block">Nama Peserta</span>
+                                <span class="font-extrabold text-xs text-white truncate block">{{ booking['nama_lengkap'] }}</span>
+                            </div>
+
+                            <div class="glass-card p-2.5 rounded-xl border border-white/10">
+                                <span class="text-[8px] font-black uppercase tracking-wider text-slate-400 block">Keberangkatan</span>
+                                <span class="font-extrabold text-xs text-[#f97316] block">📅 {{ booking['tanggal_berangkat'] }}</span>
+                            </div>
+
+                            <div class="glass-card p-2.5 rounded-xl border border-white/10">
+                                <span class="text-[8px] font-black uppercase tracking-wider text-slate-400 block">Jumlah Peserta</span>
+                                <span class="font-extrabold text-xs text-white block">👥 {{ booking['jumlah_pax'] }} Pax</span>
+                            </div>
+
+                            <div class="glass-card p-2.5 rounded-xl border border-white/10 col-span-2">
+                                <span class="text-[8px] font-black uppercase tracking-wider text-slate-400 block">Meeting Point Penjemputan</span>
+                                <span class="font-extrabold text-xs text-slate-200 truncate block" title="{{ booking['meeting_point'] }}">📍 {{ booking['meeting_point'] }}</span>
+                            </div>
+
+                            <div class="glass-card p-2.5 rounded-xl border border-white/10 col-span-2 sm:col-span-1">
+                                <span class="text-[8px] font-black uppercase tracking-wider text-slate-400 block">Durasi Trip</span>
+                                <span class="font-extrabold text-xs text-white block">⏱️ {{ booking['durasi'] }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Tour Leader Note -->
+                        <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-300 flex items-center gap-2.5">
+                            <div class="text-lg shrink-0">💡</div>
+                            <p class="text-[10px] leading-relaxed">
+                                Tunjukkan E-Ticket digital ini kepada Tour Leader di lokasi penjemputan. Kontak guide & WA group dibagikan H-2 keberangkatan.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <!-- Dashed Stub Divider -->
+                    <div class="md:w-px md:border-r-2 border-t-2 md:border-t-0 border-dashed border-white/20 my-1 md:my-0"></div>
+
+                    <!-- Right Section: Verification Stub -->
+                    <div class="w-full md:w-48 shrink-0 flex flex-col items-center justify-center space-y-3 text-center">
+                        
+                        <div class="bg-white p-2.5 rounded-2xl shadow-xl border border-slate-200">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data={{ ref_code }}-{{ booking['nama_lengkap']|urlencode }}" 
+                                 alt="QR Validasi Ticket" 
+                                 class="w-28 h-28 sm:w-32 sm:h-32 object-contain">
+                        </div>
+
+                        <div class="space-y-0.5 w-full">
+                            <span class="text-[8px] font-black uppercase tracking-widest text-[#38bdf8] block">VALIDATION CODE</span>
+                            <span class="font-mono text-xs font-black text-white bg-white/10 px-2.5 py-1 rounded-lg border border-white/10 block w-full truncate">
+                                {{ ref_code }}
+                            </span>
+                        </div>
+
+                        <!-- Barcode Visual Effect -->
+                        <div class="pt-0.5">
+                            <div class="font-barcode text-3xl text-white tracking-widest opacity-80 leading-none">
+                                {{ ref_code }}
+                            </div>
+                            <span class="text-[8px] text-slate-400 font-mono block mt-0.5">SCAN AT MEETING POINT</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Notches (Coakan Tiket di Samping Kiri & Kanan) -->
+                <div class="absolute top-1/2 -left-4 w-8 h-8 rounded-full bg-[#030712] border border-white/10 notch-circle hidden sm:block"></div>
+                <div class="absolute top-1/2 -right-4 w-8 h-8 rounded-full bg-[#030712] border border-white/10 notch-circle hidden sm:block"></div>
+
+                <!-- Footer Sign-off -->
+                <div class="pt-4 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-1.5 text-[9px] text-slate-400">
+                    <div>
+                        Issued by: <b>OP TRIP Reservation Engine</b> • Operational Manager: <b>Prajoko Subidodo</b>
+                    </div>
+                    <div>
+                        &copy; 2026 PT Jelajah Petualang Nusantara
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= VIEW 2: OFFICIAL INVOICE ================= -->
+        <div id="viewInvoice" class="hidden space-y-4">
+            
+            <div class="glass-container rounded-[28px] sm:rounded-[32px] border border-white/10 shadow-2xl overflow-hidden print-area">
+                
+                <div class="h-2 bg-gradient-to-r from-[#2563eb] via-[#38bdf8] to-[#f97316]"></div>
+
+                <div class="p-4 sm:p-6 md:p-8 space-y-5">
+                    
+                    <!-- Header -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-white/10 gap-3">
+                        <div class="space-y-1.5">
+                            <div class="flex items-center gap-2.5">
+                                <img src="/static/logo.png" alt="OP TRIP.ID" class="h-8 sm:h-9 w-auto object-contain" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=100';">
+                                <div>
+                                    <h2 class="text-base sm:text-lg font-black text-white tracking-tight">OP TRIP INDONESIA</h2>
+                                    <p class="text-[9px] font-bold text-[#38bdf8] uppercase tracking-widest">Platform Jelajah Nusantara Terpercaya</p>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-slate-400 leading-relaxed max-w-sm">
+                                PT Jelajah Petualang Nusantara • Izin Biro Wisata No. TDUP/2026/0892/OP • Customer Service: +62 812-3456-7890
+                            </p>
+                        </div>
+
+                        <div class="text-left sm:text-right space-y-0.5 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-white/5">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-white/10 text-[#38bdf8] border border-white/10">
+                                OFFICIAL INVOICE
+                            </span>
+                            <div class="text-lg sm:text-xl font-black text-white tracking-tight font-mono">{{ ref_code }}</div>
+                            <div class="text-[10px] text-slate-400 font-medium">
+                                Tanggal: <b class="text-slate-200">{{ booking['created_at'][:16] if booking['created_at'] else '' }}</b>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Banner -->
+                    <div class="p-3 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 {{ 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-200' if booking['status_pembayaran'] == 'lunas' else 'bg-amber-400/10 border border-amber-400/30 text-amber-200' }}">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-base shrink-0 {{ 'bg-emerald-500 text-slate-950' if booking['status_pembayaran'] == 'lunas' else 'bg-amber-400 text-slate-950' }}">
+                                {{ '✓' if booking['status_pembayaran'] == 'lunas' else '!' }}
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-xs uppercase tracking-wide">
+                                    {{ 'PEMBAYARAN LUNAS & TERVERIFIKASI' if booking['status_pembayaran'] == 'lunas' else 'MENUNGGU VERIFIKASI PEMBAYARAN' }}
+                                </h4>
+                                <p class="text-[10px] opacity-90">
+                                    {{ 'Bukti transfer resmi telah dikonfirmasi oleh tim keuangan.' if booking['status_pembayaran'] == 'lunas' else 'Bukti transfer sedang diperiksa oleh Admin OP Trip.' }}
+                                </p>
+                            </div>
+                        </div>
+
+                        {% if booking['status_pembayaran'] == 'lunas' %}
+                        <div class="border border-dashed border-emerald-400 rounded-full px-3 py-0.5 flex items-center justify-center text-emerald-300 font-black text-[10px] uppercase tracking-wider bg-emerald-950/40 shrink-0">
+                            <span>★ LUNAS ★</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- 2 Grid Columns Info -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="glass-card border border-white/10 rounded-xl p-3 space-y-2">
+                            <span class="text-[9px] font-black uppercase tracking-wider text-[#38bdf8] block border-b border-white/10 pb-1">
+                                1. Informasi Peserta / Pemesan
+                            </span>
+                            <div class="space-y-0.5 text-xs">
+                                <div class="flex justify-between py-0.5 border-b border-white/5">
+                                    <span class="text-slate-400">Nama Pemesan:</span>
+                                    <span class="font-extrabold text-white">{{ booking['nama_lengkap'] }}</span>
+                                </div>
+                                <div class="flex justify-between py-0.5 border-b border-white/5">
+                                    <span class="text-slate-400">Kontak WhatsApp:</span>
+                                    <span class="font-bold text-slate-200 font-mono">{{ booking['no_whatsapp'] or '-' }}</span>
+                                </div>
+                                <div class="flex justify-between py-0.5 border-b border-white/5">
+                                    <span class="text-slate-400">Email:</span>
+                                    <span class="font-semibold text-slate-200 truncate max-w-[150px]">{{ booking['email'] }}</span>
+                                </div>
+                                <div class="flex justify-between py-0.5">
+                                    <span class="text-slate-400">Metode Bayar:</span>
+                                    <span class="font-bold text-[#38bdf8]">{{ booking['metode_pembayaran'] or 'Transfer Bank' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card border border-white/10 rounded-xl p-3 space-y-2">
+                            <span class="text-[9px] font-black uppercase tracking-wider text-[#38bdf8] block border-b border-white/10 pb-1">
+                                2. Detail Paket Perjalanan
+                            </span>
+                            <div class="space-y-0.5 text-xs">
+                                <div class="flex justify-between py-0.5 border-b border-white/5">
+                                    <span class="text-slate-400">Paket Trip:</span>
+                                    <span class="font-extrabold text-white text-right truncate max-w-[150px]">{{ booking['judul_trip'] }}</span>
+                                </div>
+                                <div class="flex justify-between py-0.5 border-b border-white/5">
+                                    <span class="text-slate-400">Destinasi:</span>
+                                    <span class="font-bold text-[#38bdf8]">📍 {{ booking['destinasi'] }}</span>
+                                </div>
+                                <div class="flex justify-between py-0.5 border-b border-white/5">
+                                    <span class="text-slate-400">Keberangkatan:</span>
+                                    <span class="font-extrabold text-[#f97316]">📅 {{ booking['tanggal_berangkat'] }}</span>
+                                </div>
+                                <div class="flex justify-between py-0.5">
+                                    <span class="text-slate-400">Durasi:</span>
+                                    <span class="font-bold text-slate-200">⏱️ {{ booking['durasi'] }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Billing Table -->
+                    <div class="space-y-2">
+                        <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 block">
+                            3. Rincian Biaya & Tagihan
+                        </span>
+                        
+                        <div class="overflow-x-auto rounded-xl border border-white/10">
+                            <table class="w-full text-left text-xs text-slate-300 min-w-[450px]">
+                                <thead class="bg-white/10 text-white uppercase text-[9px] font-black tracking-wider">
+                                    <tr>
+                                        <th class="p-2.5">Deskripsi Layanan</th>
+                                        <th class="p-2.5 text-center">Jumlah (Pax)</th>
+                                        <th class="p-2.5 text-right">Tarif Satuan (Rp)</th>
+                                        <th class="p-2.5 text-right">Total Tagihan (Rp)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-white/10">
+                                    <tr>
+                                        <td class="p-3 font-bold text-white">
+                                            Paket Open Trip: {{ booking['judul_trip'] }}
+                                        </td>
+                                        <td class="p-3 text-center font-extrabold text-xs">{{ booking['jumlah_pax'] }} Pax</td>
+                                        <td class="p-3 text-right font-medium">Rp {{ "{:,.0f}".format(booking['harga_per_pax']).replace(',', '.') }}</td>
+                                        <td class="p-3 text-right font-black text-white text-xs">
+                                            Rp {{ "{:,.0f}".format(booking['total_harga']).replace(',', '.') }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="bg-white/5 border-t-2 border-white/10 font-extrabold">
+                                    <tr>
+                                        <td colspan="3" class="p-3 text-right uppercase tracking-wider text-slate-400">Total Pembayaran:</td>
+                                        <td class="p-3 text-right text-base font-black text-[#f97316]">
+                                            Rp {{ "{:,.0f}".format(booking['total_harga']).replace(',', '.') }}
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Sign-off Manager -->
+                    <div class="pt-4 border-t border-white/10 flex flex-row justify-between items-end text-xs text-slate-400">
+                        <div class="space-y-0.5">
+                            <span class="text-[9px] font-bold uppercase text-slate-500 block">Diterbitkan Oleh:</span>
+                            <span class="font-extrabold text-white text-[10px]">OP Trip Official Reservation System</span>
+                        </div>
+
+                        <div class="text-right space-y-0.5">
+                            <span class="text-[9px] font-bold uppercase text-slate-500 block">Operational Manager</span>
+                            <div class="font-serif text-base font-black text-[#38bdf8] italic pr-1">Prajoko Subidodo</div>
+                            <span class="text-[9px] font-bold text-slate-400 block">Head of Field Services</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Script Switcher View Tab -->
+    <script>
+        function switchView(view) {
+            const ticketView = document.getElementById('viewTicket');
+            const invoiceView = document.getElementById('viewInvoice');
+            const btnTicket = document.getElementById('btnTabTicket');
+            const btnInvoice = document.getElementById('btnTabInvoice');
+
+            if (view === 'ticket') {
+                ticketView.classList.remove('hidden');
+                invoiceView.classList.add('hidden');
+                
+                btnTicket.className = "flex-1 sm:flex-none px-4 sm:px-5 py-2 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 bg-gradient-to-r from-[#2563eb] to-[#38bdf8] text-white shadow-lg shadow-[#2563eb]/20";
+                btnInvoice.className = "flex-1 sm:flex-none px-4 sm:px-5 py-2 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white";
+            } else {
+                invoiceView.classList.remove('hidden');
+                ticketView.classList.add('hidden');
+
+                btnInvoice.className = "flex-1 sm:flex-none px-4 sm:px-5 py-2 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 bg-gradient-to-r from-[#2563eb] to-[#38bdf8] text-white shadow-lg shadow-[#2563eb]/20";
+                btnTicket.className = "flex-1 sm:flex-none px-4 sm:px-5 py-2 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white";
+            }
+        }
+    </script>
+</body>
+</html>

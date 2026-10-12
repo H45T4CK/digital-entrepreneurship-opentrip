@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Pendapatan & Pemesanan — OP Trip.id</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        /* Print Engine Layout Rules */
+        @media print {
+            .no-print { display: none !important; }
+            body { 
+                background: white !important; 
+                color: black !important; 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important;
+            }
+            .print-container { 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                box-shadow: none !important; 
+                border: none !important; 
+                width: 100% !important; 
+                max-width: 100% !important; 
+            }
+            @page { 
+                margin: 8mm 10mm; 
+                size: A4 landscape; 
+            }
+            tr { page-break-inside: avoid; }
+            
+            /* Kunci grid kartu menjadi 4 kolom saat dicetak PDF */
+            .print-grid-4 {
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen py-4 px-2 sm:px-6">
+
+    <!-- Action Toolbar (Hidden saat Cetak / Simpan PDF) -->
+    <div class="max-w-6xl mx-auto mb-4 no-print flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+        <a href="/admin?tab=rekap" class="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span>← Kembali ke Panel Admin</span>
+        </a>
+
+        <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+            <span class="text-xs text-slate-500 font-medium">Periode: <b class="text-slate-900">{{ period_title }}</b></span>
+            
+            <button onclick="window.print()" class="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-black text-xs flex items-center gap-2 shadow-md transition active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                <span>Cetak PDF</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Printable Official Executive Document -->
+    <div class="print-container max-w-6xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-xl p-4 sm:p-7 space-y-3.5 overflow-hidden">
+        
+        <!-- Kop Surat Resmi -->
+        <div class="flex justify-between items-start pb-2.5 border-b-2 border-slate-900 gap-3 sm:gap-4">
+            <div class="space-y-0.5">
+                <div class="flex items-center gap-2.5">
+                    <img src="/static/logo.png" alt="OP Trip Logo" class="h-7 sm:h-8 w-auto object-contain" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=100';">
+                    <div>
+                        <h1 class="text-xs sm:text-base font-black text-slate-900 tracking-tight leading-none">PT JELAJAH PETUALANG NUSANTARA</h1>
+                        <p class="text-[8px] sm:text-[10px] font-black text-teal-700 tracking-wider uppercase mt-0.5">OP TRIP INDONESIA — DIVISI KEUANGAN & OPERASIONAL</p>
+                    </div>
+                </div>
+                <p class="text-[8px] sm:text-[8.5px] text-slate-500 leading-tight pt-0.5">
+                    Gedung Menara Wisata Nusantara Lt. 8, Jl. Jend. Sudirman Kav. 24, Jakarta Pusat • Email: finance@opentrip.com
+                </p>
+            </div>
+
+            <div class="text-right space-y-0.5 shrink-0">
+                <span class="inline-block px-2 py-0.5 rounded bg-slate-900 text-white font-mono font-black text-[8px] sm:text-[8.5px] uppercase">
+                    LAPORAN RESMI
+                </span>
+                <div class="text-[8px] sm:text-[8.5px] text-slate-500 font-mono">No: LAP/OPT/2026/FIN-{{ "%04d"|format(bookings|length) }}</div>
+                <div class="text-[8px] sm:text-[8.5px] text-slate-500">Waktu Cetak: <b>{{ now_str }}</b></div>
+            </div>
+        </div>
+
+        <!-- Sub Header Judul -->
+        <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+            <div>
+                <h2 class="text-xs font-black text-slate-900 uppercase tracking-tight">
+                    REKAPITULASI PENDAPATAN & PEMESANAN OPEN TRIP
+                </h2>
+                <p class="text-[9px] sm:text-[9.5px] text-slate-600">
+                    Periode Laporan: <b class="text-teal-800">{{ period_title }}</b>
+                </p>
+            </div>
+        </div>
+
+        <!-- KPI Summary Cards Grid (Fleksibel: 2 Kolom di HP, 4 Kolom di Laptop & Cetak PDF) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 print-grid-4 gap-2 sm:gap-2.5 text-xs">
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1 min-w-0">
+                <span class="text-[8.5px] sm:text-[8px] font-bold text-slate-500 uppercase block truncate">Total Omset Lunas</span>
+                <div class="text-xs sm:text-sm font-black text-emerald-700 tracking-tight break-words">Rp {{ "{:,}".format(total_omset) }}</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1 min-w-0">
+                <span class="text-[8.5px] sm:text-[8px] font-bold text-slate-500 uppercase block truncate">Total Reservasi</span>
+                <div class="text-xs sm:text-sm font-black text-slate-900 tracking-tight break-words">{{ bookings|length }} Transaksi</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1 min-w-0">
+                <span class="text-[8.5px] sm:text-[8px] font-bold text-slate-500 uppercase block truncate">Transaksi Lunas</span>
+                <div class="text-xs sm:text-sm font-black text-teal-700 tracking-tight break-words">{{ total_lunas }} Transaksi</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1 min-w-0">
+                <span class="text-[8.5px] sm:text-[8px] font-bold text-slate-500 uppercase block truncate">Menunggu Bayar</span>
+                <div class="text-xs sm:text-sm font-black text-amber-700 tracking-tight break-words">{{ total_pending }} Transaksi</div>
+            </div>
+        </div>
+
+        <!-- Tabel Transaksi Terperinci -->
+        <div class="space-y-1">
+            <span class="text-[8.5px] font-black uppercase tracking-wider text-slate-500 block">
+                Rincian Transaksi Peserta
+            </span>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left text-[9px] sm:text-[9.5px] text-slate-700 border-collapse">
+                    <thead>
+                        <tr class="bg-slate-900 text-white uppercase text-[8px] font-black tracking-wider">
+                            <th class="py-2 px-2 text-center w-8">No</th>
+                            <th class="py-2 px-2 whitespace-nowrap w-24">ID Booking</th>
+                            <th class="py-2 px-2 whitespace-nowrap w-24">Waktu</th>
+                            <th class="py-2 px-2 whitespace-nowrap w-36">Nama Pemesan</th>
+                            <th class="py-2 px-2 whitespace-nowrap w-28">WhatsApp</th>
+                            <th class="py-2 px-2">Paket Trip</th>
+                            <th class="py-2 px-2 text-center w-10">Pax</th>
+                            <th class="py-2 px-2 text-right whitespace-nowrap w-28">Total Tagihan (Rp)</th>
+                            <th class="py-2 px-2 text-center whitespace-nowrap w-24">Metode</th>
+                            <th class="py-2 px-2 text-center whitespace-nowrap w-20">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        {% for b in bookings %}
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="py-1.5 px-2 text-slate-400 font-mono text-center">{{ loop.index }}</td>
+                            <td class="py-1.5 px-2 font-mono font-bold text-slate-900 whitespace-nowrap">#OPT-{{ "%05d"|format(b['id']) }}</td>
+                            <td class="py-1.5 px-2 text-slate-500 whitespace-nowrap">{{ b['created_at'][:10] if b['created_at'] else '' }}</td>
+                            <td class="py-1.5 px-2 font-bold text-slate-900 whitespace-nowrap truncate max-w-[140px]">{{ b['nama_lengkap'] }}</td>
+                            <td class="py-1.5 px-2 font-mono text-slate-600 whitespace-nowrap">{{ b['no_whatsapp'] or '-' }}</td>
+                            <td class="py-1.5 px-2 font-semibold text-slate-800 leading-snug">{{ b['judul_trip'] }}</td>
+                            <td class="py-1.5 px-2 text-center font-bold">{{ b['jumlah_pax'] }}</td>
+                            <td class="py-1.5 px-2 text-right font-black whitespace-nowrap {{ 'text-emerald-700' if b['status_pembayaran'] == 'lunas' else 'text-slate-800' }}">
+                                Rp {{ "{:,}".format(b['total_harga']) }}
+                            </td>
+                            <td class="py-1.5 px-2 text-center text-slate-600 whitespace-nowrap">{{ b['metode_pembayaran'] or 'Transfer' }}</td>
+                            <td class="py-1.5 px-2 text-center font-black uppercase text-[7.5px] whitespace-nowrap">
+                                {% if b['status_pembayaran'] == 'lunas' %}
+                                    <span class="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">LUNAS</span>
+                                {% elif b['status_pembayaran'] == 'pending' %}
+                                    <span class="text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">PENDING</span>
+                                {% else %}
+                                    <span class="text-red-700 bg-red-50 px-1.5 py-0.5 rounded border border-red-200">DITOLAK</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="10" class="p-4 text-center text-slate-400 font-medium">
+                                Tidak ada transaksi pada periode ini.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="bg-slate-50 border-t-2 border-slate-900 font-black">
+                        <tr>
+                            <td colspan="7" class="py-2 px-2 text-right uppercase tracking-wider text-slate-700 text-[8.5px]">TOTAL OMSET TRANSAKSI LUNAS:</td>
+                            <td class="py-2 px-2 text-right text-xs text-emerald-800 whitespace-nowrap">
+                                Rp {{ "{:,}".format(total_omset) }}
+                            </td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Kolom Tanda Tangan & Pengesahan Resmi -->
+        <div class="pt-3 border-t border-slate-200 flex justify-between items-end text-xs text-slate-600">
+            <div class="space-y-0.5">
+                <span class="text-[8px] font-bold uppercase text-slate-400 block">Dipersiapkan Oleh:</span>
+                <span class="font-extrabold text-slate-900 block text-[10px]">Finance & Admin Department</span>
+                <p class="text-[8px] text-slate-400">Dicetak otomatis dari Sistem OP Trip Admin ERP.</p>
+            </div>
+
+            <div class="text-center space-y-0.5 min-w-[220px] sm:min-w-[230px]">
+                <span class="text-[8px] font-bold uppercase text-slate-400 block">Disahkan Oleh,</span>
+                
+                <!-- Tanda Tangan Gambar Asli (ttd.png) -->
+                <div class="h-10 flex items-center justify-center my-0.5">
+                    <img src="/static/TTD_Purbaya_Yudhi_Sadewa.png" alt="Tanda Tangan Direktur" class="h-10 w-auto object-contain mix-blend-multiply" onerror="this.style.display='none';">
+                </div>
+                
+                <!-- Nama Terang Tunggal di Bawah Garis -->
+                <div class="border-t border-slate-400 pt-0.5">
+                    <span class="font-black text-slate-900 block text-[10px]">Dr. Purbaya Yudhi Sadewa, Ph.D., M.Sc.</span>
+                    <span class="text-[8px] text-slate-500 block">Direktur Keuangan & Operasional</span>
+                    <span class="text-[8px] text-slate-400 block font-mono">NIP. 2026-OP-00109</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

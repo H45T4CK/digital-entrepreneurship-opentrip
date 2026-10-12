@@ -1,0 +1,4 @@
+admin
+URL Login: http://localhost:8000/
+loginEmail: admin@opentrip.com   
+Password: admin123   

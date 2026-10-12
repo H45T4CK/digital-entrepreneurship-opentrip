@@ -3,103 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Trip — {{ trip[1] }}</title>
+    <title>{{ trip['judul_trip'] }} — OP TRIP.ID</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style> 
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #030712;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .glass-nav {
+            background: rgba(3, 7, 18, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-container {
+            background: rgba(11, 19, 41, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.75);
+        }
+
+        .glass-card {
+            background: rgba(11, 19, 41, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes ambientFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.05); }
+        }
+
+        .animate-ambient { animation: ambientFloat 12s ease-in-out infinite; }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen py-10 px-4">
+<body class="min-h-screen text-slate-100 flex flex-col justify-between selection:bg-[#38bdf8] selection:text-slate-950 relative overflow-x-hidden">
 
-    <div class="max-w-4xl mx-auto space-y-6">
-        <a href="/dashboard" class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-            Kembali ke Katalog
-        </a>
+    <!-- Ambient Glowing Background Orbs -->
+    <div class="fixed -top-40 -left-40 w-[600px] h-[600px] bg-[#2563eb]/15 rounded-full blur-[160px] pointer-events-none animate-ambient"></div>
+    <div class="fixed top-1/3 -right-40 w-[500px] h-[500px] bg-[#38bdf8]/10 rounded-full blur-[160px] pointer-events-none animate-ambient" style="animation-delay: 4s;"></div>
 
-        <div class="bg-white rounded-[32px] overflow-hidden border border-slate-200 shadow-xl">
-            <!-- Header Image -->
-            <div class="relative h-72 sm:h-96 w-full">
-                <img src="{{ trip[8] }}" alt="{{ trip[1] }}" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/30 to-transparent"></div>
-                <div class="absolute bottom-6 left-6 sm:bottom-8 sm:left-8 text-white space-y-2">
-                    <span class="px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-teal-500/80 backdrop-blur-md shadow-lg">📍 {{ trip[2] }}</span>
-                    <h1 class="text-3xl sm:text-4xl font-extrabold drop-shadow-md">{{ trip[1] }}</h1>
+    <!-- Header Navbar Modern -->
+    <header class="glass-nav sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-6">
+            <a href="/dashboard" class="flex items-center gap-3 group">
+                <img src="/static/logo.png" alt="OP TRIP.ID" class="h-10 sm:h-11 w-auto object-contain transition-transform group-hover:scale-105" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=100';">
+            </a>
+
+            <div class="flex items-center gap-3">
+                <a href="/dashboard" class="px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-bold transition border border-white/10 flex items-center gap-1.5">
+                    <span>← Kembali ke Dashboard</span>
+                </a>
+                <a href="/riwayat" class="px-4 py-2 rounded-full bg-[#38bdf8]/10 hover:bg-[#38bdf8]/20 text-[#38bdf8] text-xs font-bold transition border border-[#38bdf8]/30">
+                    🧾 Riwayat
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8 w-full flex-grow relative z-10">
+        
+        <!-- Hero Header Image & Badges -->
+        <div class="glass-container rounded-[36px] overflow-hidden p-3 sm:p-4 border border-white/10 space-y-4">
+            
+            <!-- Main Hero Image -->
+            <div class="relative h-72 sm:h-96 md:h-[420px] w-full rounded-[28px] overflow-hidden bg-slate-900">
+                <img src="{{ trip['gambar_url'] if trip['gambar_url'].startswith('http') else '/static/uploads/' + trip['gambar_url'] }}" 
+                     alt="{{ trip['judul_trip'] }}" 
+                     class="w-full h-full object-cover" 
+                     onerror="this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200'">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/30 to-transparent"></div>
+
+                <!-- Overlay Badges -->
+                <div class="absolute top-4 left-4 flex flex-wrap gap-2">
+                    <span class="px-3.5 py-1.5 rounded-full text-xs font-black uppercase bg-slate-950/80 text-[#38bdf8] border border-[#38bdf8]/30 backdrop-blur-md shadow-lg">
+                        📍 {{ trip['destinasi'] }}
+                    </span>
+                    <span class="px-3.5 py-1.5 rounded-full text-xs font-black uppercase bg-slate-950/80 text-white border border-white/10 backdrop-blur-md shadow-lg">
+                        {{ trip['kategori'] or 'Open Trip' }}
+                    </span>
+                </div>
+
+                <div class="absolute top-4 right-4">
+                    <span class="px-3.5 py-1.5 rounded-full text-xs font-black uppercase shadow-lg {{ 'bg-slate-950/80 text-[#38bdf8] border border-[#38bdf8]/30' if trip['sisa_kuota'] > 5 else 'bg-[#f97316]/20 text-[#f97316] border border-[#f97316]/40 animate-pulse' }}">
+                        Sisa {{ trip['sisa_kuota'] }} Pax
+                    </span>
+                </div>
+
+                <!-- Bottom Quick Info Overlay -->
+                <div class="absolute bottom-4 left-4 right-4 flex flex-col sm:flex-row sm:items-end justify-between gap-3 text-white">
+                    <div class="space-y-1">
+                        <span class="text-xs text-[#38bdf8] font-black uppercase tracking-wider">Garansi Pasti Berangkat</span>
+                        <h1 class="text-2xl sm:text-4xl font-black text-white leading-tight drop-shadow-md">
+                            {{ trip['judul_trip'] }}
+                        </h1>
+                    </div>
+
+                    <div class="bg-slate-950/80 backdrop-blur-md border border-white/10 px-4 py-2.5 rounded-2xl flex items-center gap-4 text-xs shrink-0">
+                        <div>
+                            <span class="text-slate-400 block text-[10px] font-bold uppercase">Rating Trip</span>
+                            <span class="text-amber-400 font-extrabold flex items-center gap-1">⭐ 4.9 <span class="text-slate-400 font-normal">(50+ Ulasan)</span></span>
+                        </div>
+                        <div class="border-l border-white/10 pl-4">
+                            <span class="text-slate-400 block text-[10px] font-bold uppercase">Durasi</span>
+                            <span class="text-white font-extrabold">⏱️ {{ trip['durasi'] }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Detail Information -->
-            <div class="p-6 sm:p-10 space-y-8">
+        </div>
+
+        <!-- Main Grid Layout (8 Cols Info + 4 Cols Booking Box) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Content Area (8 Cols) -->
+            <div class="lg:col-span-8 space-y-8">
                 
-                <!-- 4 Kolom Info -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-200">
-                    <div>
-                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Durasi</span>
-                        <span class="font-extrabold text-sm text-slate-800">⏱️ {{ trip[7] }}</span>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Keberangkatan</span>
-                        <span class="font-extrabold text-sm text-slate-800">📅 {{ trip[5] }}</span>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Meeting Point</span>
-                        <span class="font-extrabold text-sm text-slate-800">📍 {{ trip[6] }}</span>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Sisa Kuota</span>
-                        <span class="font-extrabold text-sm text-orange-600">👥 {{ trip[4] }} Pax</span>
-                    </div>
-                </div>
-
-                <!-- Fasilitas & Rundown Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Fasilitas -->
-                    <div class="space-y-4">
-                        <h3 class="font-extrabold text-lg text-slate-900 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-teal-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                            Fasilitas Termasuk:
-                        </h3>
-                        <ul class="space-y-2.5 text-sm text-slate-600 font-medium">
-                            <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Transportasi AC selama trip</li>
-                            <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Menginap di Hotel / Homestay AC</li>
-                            <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Makan & Minum sesuai program</li>
-                            <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Tiket masuk destinasi wisata</li>
-                            <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Tour Leader & Dokumentasi Foto</li>
-                        </ul>
+                <!-- Section 1: Overview & Specs Grid -->
+                <div class="glass-card rounded-[28px] p-6 sm:p-8 space-y-6">
+                    <div class="border-b border-white/10 pb-4">
+                        <h3 class="text-xl font-black text-white">Deskripsi & Perjalanan 🌄</h3>
                     </div>
 
-                    <!-- Rundown Timeline -->
-                    <div class="space-y-4">
-                        <h3 class="font-extrabold text-lg text-slate-900 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            Rundown Perjalanan:
-                        </h3>
-                        
-                        <div class="relative border-l-2 border-teal-100 ml-3 space-y-6 pb-2">
-                            {% for r in rundown %}
-                            <div class="relative pl-6">
-                                <div class="absolute w-4 h-4 bg-teal-500 rounded-full -left-[9px] top-1 border-4 border-white shadow-sm"></div>
-                                <h4 class="font-extrabold text-sm text-slate-800">{{ r.hari }}: {{ r.judul }}</h4>
-                                <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">{{ r.desc }}</p>
-                            </div>
-                            {% endfor %}
+                    <p class="text-sm text-slate-300 leading-relaxed font-normal">
+                        {{ trip['deskripsi'] }}
+                    </p>
+
+                    <!-- Key Specs Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                        <div class="bg-white/5 p-3.5 rounded-2xl border border-white/10 space-y-1">
+                            <span class="text-[10px] text-slate-400 font-bold uppercase block">📅 Keberangkatan</span>
+                            <span class="text-xs font-black text-[#f97316]">{{ trip['tanggal_berangkat'] }}</span>
+                        </div>
+
+                        <div class="bg-white/5 p-3.5 rounded-2xl border border-white/10 space-y-1">
+                            <span class="text-[10px] text-slate-400 font-bold uppercase block">📍 Meeting Point</span>
+                            <span class="text-xs font-black text-white truncate block" title="{{ trip['meeting_point'] }}">{{ trip['meeting_point'] }}</span>
+                        </div>
+
+                        <div class="bg-white/5 p-3.5 rounded-2xl border border-white/10 space-y-1">
+                            <span class="text-[10px] text-slate-400 font-bold uppercase block">⏱️ Durasi Paket</span>
+                            <span class="text-xs font-black text-[#38bdf8]">{{ trip['durasi'] }}</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Footer Checkout -->
-                <div class="pt-8 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-0.5">Harga Per Pax</span>
-                        <span class="text-3xl font-black text-orange-600">Rp {{ "{:,}".format(trip[3]) }}</span>
+                <!-- Section 2: Fasilitas Included & Excluded -->
+                <div class="glass-card rounded-[28px] p-6 sm:p-8 space-y-6">
+                    <div class="border-b border-white/10 pb-4">
+                        <h3 class="text-xl font-black text-white">Fasilitas Perjalanan 🎒</h3>
                     </div>
-                    <a href="/checkout/{{ trip[0] }}" class="text-center px-8 py-3.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm shadow-lg shadow-orange-600/20 active:scale-95 transition-all">
-                        Pesan Sekarang
-                    </a>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Included -->
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-black text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                <span>Termasuk (Included):</span>
+                            </h4>
+                            <ul class="space-y-2 text-xs text-slate-300">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-emerald-400 font-black">✓</span>
+                                    <span>Transportasi AC / Kapal Pilihan sesuai program</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-emerald-400 font-black">✓</span>
+                                    <span>Akomodasi Hotel / Resort / Homestay</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-emerald-400 font-black">✓</span>
+                                    <span>Konsumsi Makanan & Air Mineral Harian</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-emerald-400 font-black">✓</span>
+                                    <span>Tour Leader & Guide Lokal Berlisensi HPI</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-emerald-400 font-black">✓</span>
+                                    <span>Dokumentasi Foto DSLR & Video Drone HD</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-emerald-400 font-black">✓</span>
+                                    <span>Tiket Masuk Semua Destinasi Wisata</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Excluded -->
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-black text-red-400 uppercase tracking-wider flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                                <span>Tidak Termasuk (Excluded):</span>
+                            </h4>
+                            <ul class="space-y-2 text-xs text-slate-400">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-red-400 font-black">✕</span>
+                                    <span>Tiket Pesawat / Kereta dari Kota Asal</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-red-400 font-black">✕</span>
+                                    <span>Pengeluaran Pribadi & Tipping Guide</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-red-400 font-black">✕</span>
+                                    <span>Asuransi Jiwa Tambahan (Optional)</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Itinerary / Jadwal Perjalanan -->
+                <div class="glass-card rounded-[28px] p-6 sm:p-8 space-y-6">
+                    <div class="border-b border-white/10 pb-4">
+                        <h3 class="text-xl font-black text-white">Rencana Perjalanan (Itinerary) 🗺️</h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Day 1 -->
+                        <div class="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2.5 py-1 rounded-lg bg-[#2563eb]/20 text-[#38bdf8] text-[10px] font-black uppercase border border-[#38bdf8]/30">Hari Ke-1</span>
+                                <span class="text-xs text-slate-400 font-bold">Penjemputan & Eksplorasi Utama</span>
+                            </div>
+                            <h4 class="font-extrabold text-sm text-white">Penjemputan di Meeting Point & Destinasi Sesi 1</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Peserta berkumpul di {{ trip['meeting_point'] }}, dilanjutkan brefing singkat dengan Tour Leader, menuju destinasi utama, makan siang bersama, dan check-in penginapan.
+                            </p>
+                        </div>
+
+                        <!-- Day 2 -->
+                        <div class="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2.5 py-1 rounded-lg bg-[#f97316]/20 text-[#f97316] text-[10px] font-black uppercase border border-[#f97316]/30">Hari Ke-2</span>
+                                <span class="text-xs text-slate-400 font-bold">Full Day Adventure & Sunset</span>
+                            </div>
+                            <h4 class="font-extrabold text-sm text-white">Eksplorasi Bahari / Pegunungan & Sesi Dokumentasi Drone</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Sesi foto penerbitan matahari (sunrise), aktivitas eksplorasi spot wisata, makan siang lokal, menikmati matahari terbenam, dan makan malam santai bersama rombongan.
+                            </p>
+                        </div>
+
+                        <!-- Day 3 -->
+                        <div class="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase border border-emerald-500/30">Hari Ke-3</span>
+                                <span class="text-xs text-slate-400 font-bold">Oleh-oleh & Transfer Kembali</span>
+                            </div>
+                            <h4 class="font-extrabold text-sm text-white">Pusat Oleh-oleh & Pengantaran Kembali ke Meeting Point</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Sarapan pagi, check-out penginapan, berburu pusat kuliner/oleh-oleh khas daerah, dan pengantaran kembali ke titik kumpul awal. Trip selesai.
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
             </div>
+
+            <!-- Right Sidebar Area: Booking Box (4 Cols) -->
+            <div class="lg:col-span-4 sticky top-24 space-y-6">
+                
+                <div class="glass-container rounded-[32px] p-6 sm:p-8 space-y-6 border border-white/15">
+                    
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-black uppercase text-slate-400 block">Harga Tarif Resmi / Pax</span>
+                        <div class="text-3xl sm:text-4xl font-black text-[#f97316]">
+                            Rp {{ "{:,.0f}".format(trip['harga_per_pax']).replace(',', '.') }}
+                        </div>
+                        <span class="text-[11px] text-emerald-400 font-bold block">✓ Tanpa Biaya Tersembunyi (All-In)</span>
+                    </div>
+
+                    <div class="space-y-3 pt-4 border-t border-white/10 text-xs text-slate-300">
+                        <div class="flex justify-between py-1 border-b border-white/5">
+                            <span class="text-slate-400">Sisa Kuota:</span>
+                            <b class="text-[#38bdf8] font-black">{{ trip['sisa_kuota'] }} Pax Tersedia</b>
+                        </div>
+                        <div class="flex justify-between py-1 border-b border-white/5">
+                            <span class="text-slate-400">Jadwal Trip:</span>
+                            <b class="text-white">{{ trip['tanggal_berangkat'] }}</b>
+                        </div>
+                        <div class="flex justify-between py-1">
+                            <span class="text-slate-400">Status Trip:</span>
+                            <b class="text-emerald-400">Pasti Berangkat</b>
+                        </div>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="space-y-3 pt-2">
+                        <a href="/checkout/{{ trip['id'] }}" class="w-full bg-gradient-to-r from-[#2563eb] to-[#38bdf8] hover:from-[#38bdf8] hover:to-[#2563eb] text-white font-black py-4 rounded-2xl text-xs sm:text-sm shadow-xl shadow-[#2563eb]/25 transition flex items-center justify-center gap-2 active:scale-95">
+                            <span>Pesan Tiket Sekarang</span>
+                            <span>→</span>
+                        </a>
+
+                        <button type="button" onclick="toggleChat()" class="w-full bg-white/5 hover:bg-white/10 text-slate-200 font-bold py-3 rounded-2xl text-xs border border-white/10 transition flex items-center justify-center gap-2">
+                            <span>💬 Konsultasi CS via Chat</span>
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <span class="text-[10px] text-slate-500 block">🔒 Transaksi aman & konfirmasi langsung via E-Ticket</span>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
-    </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950/80 text-slate-400 text-xs py-10 border-t border-white/10 mt-20 relative z-10 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px]">
+            <div>
+                &copy; 2026 <b>OP TRIP INDONESIA</b> (PT Jelajah Petualang Nusantara). All rights reserved.
+            </div>
+            <div class="flex gap-6 font-semibold">
+                <a href="/dashboard" class="hover:text-[#38bdf8] transition-colors">Katalog Trip</a>
+                <a href="/riwayat" class="hover:text-[#38bdf8] transition-colors">Riwayat Pemesanan</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Include Floating Live Chat User Widget -->
+    {% include 'chat_widget.html' %}
 
 </body>
 </html>
