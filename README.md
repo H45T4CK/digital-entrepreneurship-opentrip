@@ -341,7 +341,7 @@ Kamu dapat mengklik tombol **`⚡ Auto-Seed Template`** pada Header Panel Admin 
 
 ```text
 optrip/
-├── app_2.py                    # Server Flask Backend, Database Init, & Controllers
+├── app.py                    # Server Flask Backend, Database Init, & Controllers
 ├── opentrip.db                 # Database SQLite3 (Otomatis terbuat saat run)
 ├── README.md                   # Dokumentasi resmi proyek (File ini)
 │
@@ -360,7 +360,7 @@ optrip/
     │   ├── register.html       # Halaman Pendaftaran
     │   └── forgot.html         # Halaman Reset Password OTP
     │
-    ├── user_dashboard_2.html   # Homepage & Katalog Trip Utama
+    ├── user_dashboard.html   # Homepage & Katalog Trip Utama
     ├── trip_detail.html        # Detail Trip, Fasilitas, Rundown & Ulasan
     ├── checkout.html           # Formulir Reservasi, Bank & QRIS MPM
     ├── riwayat.html            # Riwayat Pesanan & Status Traveler
