@@ -365,7 +365,7 @@ optrip/
     ├── checkout.html           # Formulir Reservasi, Bank & QRIS MPM
     ├── riwayat.html            # Riwayat Pesanan & Status Traveler
     ├── invoice.html            # E-Ticket Boarding Pass & E-Invoice Cetak
-    ├── chat_widget_2.html      # Widget Floating Live Chat Customer Service
+    ├── chat_widget.html      # Widget Floating Live Chat Customer Service
     ├── syarat_ketentuan.html   # Halaman Dokumen Syarat & Ketentuan
     └── kebijakan_privasi.html  # Halaman Dokumen Kebijakan Privasi
 ```
